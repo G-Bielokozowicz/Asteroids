@@ -53,7 +53,6 @@ class Spaceship(GameObject):
         bullet_velocity = self.direction * self.BULLET_SPEED + self.velocity
         bullet = Bullet(bullet_position, bullet_velocity, 0)
         self.create_bullet_callback(bullet)
-
         # for i in range(-50, 51, 50):
         #     bullet = Bullet(bullet_position, bullet_velocity, i)
         #     self.create_bullet_callback(bullet)
