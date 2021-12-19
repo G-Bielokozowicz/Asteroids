@@ -15,7 +15,7 @@ class GameObject:
 
     def draw(self, surface):
         blit_position = self.position - Vector2(
-            self.radius)  # w pythonie domyslnie position to lewy gorny rog, wiec trzeba to zmienic
+            self.radius)
         surface.blit(self.sprite, blit_position)
 
     def move(self, surface):
@@ -27,16 +27,19 @@ class GameObject:
 
 
 class Spaceship(GameObject):
-    MANEUVERABILITY = 3  # szybkosc obracania
-    ACCELERATION = 0.1  # szybkosc przyspieszania
-    MAX_SPEED = 8  # maksymalna szybkosc
-    BULLET_SPEED = 4
+    MANEUVERABILITY = 3  # turning speed
+    ACCELERATION = 0.1  # acceleration speed
+    MAX_SPEED = 8  # maximum speed
+    BULLET_SPEED = 4  # bullet speed
+    STARTING_LIVES = 3  # starting ammount of lives
 
     def __init__(self, position, create_bullet_callback):
         self.create_bullet_callback = create_bullet_callback
         self.laser_sound = load_sound("laser")
+        self.spaceship_hit_asteroid = load_sound("asteroid_hit")
         self.spaceship_destroy_sound = load_sound("spaceship_destroy")
         self.direction = Vector2(UP)
+        self.lives = self.STARTING_LIVES
         super().__init__(position, load_sprite("spaceship"), Vector2(0))
 
     def rotate(self, clockwise=True):
@@ -67,8 +70,15 @@ class Spaceship(GameObject):
         surface.blit(rotated_surface, blit_position)
 
     def destroy(self, game):
-        game.spaceship = None
-        self.spaceship_destroy_sound.play()
+        if self.lives > 1:
+            self.lives -= 1
+            self.spaceship_hit_asteroid.play()
+            return False
+        elif self.lives == 1:
+            self.lives -= -1
+            game.spaceship = None
+            self.spaceship_destroy_sound.play()
+            return True
 
 
 class Asteroid(GameObject):
@@ -96,7 +106,7 @@ class Asteroid(GameObject):
 class Bullet(GameObject):
     def __init__(self, position, velocity, rotation):
         super().__init__(position, load_sprite("bullet"), velocity)
-        # rotacja pocisku przy wystrzale
+        # rotation of bullet when fired
         self.velocity.rotate_ip(rotation)
 
     def move(self, surface):

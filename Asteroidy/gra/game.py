@@ -18,6 +18,7 @@ class Asteroidy:
         self.message_color = Color("red")
         self.asteroids = []
         self.bullets = []
+        self.score = 0
         self.spaceship = Spaceship((800, 450), self.bullets.append)
         self.count = 0
         self.menu_mode = True
@@ -29,11 +30,11 @@ class Asteroidy:
         pygame.init()
         pygame.display.set_caption("Asteroidy")
 
-    # menu glowne
+    # main menu
     def menu(self):
         while self.menu_mode:
             self.screen.fill((0, 0, 0))
-            #self.screen.blit(self.background, (0, 0))
+            # self.screen.blit(self.background, (0, 0))
             start_game_text = 'Press Enter to start the game!'
             print_text(self.screen, start_game_text, 50, 50, 64, True, (255, 255, 255))
             pygame.display.flip()
@@ -45,7 +46,7 @@ class Asteroidy:
                     self.menu_mode = False
                     self.main_loop()
 
-    # restart gry
+    # game restart
     def _restart(self):
         if self.game_over:
             self.spaceship = Spaceship((800, 450), self.bullets.append)
@@ -53,10 +54,10 @@ class Asteroidy:
             self.message = ""
             self.asteroids.clear()
             self.bullets.clear()
+            self.score = 0
             self._asteroid_spawn(amount=6)
 
-
-    # spawn asteroidow
+    # spawning asteroids
     def _asteroid_spawn(self, amount):
         for _ in range(amount):
             while True:
@@ -65,10 +66,10 @@ class Asteroidy:
                     break
             self.asteroids.append(Asteroid(position, self.asteroids.append))
 
-    # gra
+    # game
     def main_loop(self):
         while True:
-            # handle input poza game over zeby mozna bylo wyjsc
+            # handle input outside of if, so that it's possible to quit and restart the game
             self._handle_input()
             if not self.game_over:
                 self._process_game_logic()
@@ -76,19 +77,19 @@ class Asteroidy:
 
     def _handle_input(self):
         for event in pygame.event.get():
-            # wyjscie z gry
+            # exiting the game
             if self.game_over:
                 if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
                     self._restart()
             if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
                 quit()
-            # strzelanie
 
+            # shooting
             elif self.spaceship and event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
                 self.spaceship.shoot()
 
+        # moving the spaceship
         is_key_pressed = pygame.key.get_pressed()
-
         if self.spaceship:
             if is_key_pressed[pygame.K_RIGHT]:
                 self.spaceship.rotate(clockwise=True)
@@ -111,31 +112,37 @@ class Asteroidy:
         #                 break
         #         self.asteroids.append(Asteroid(position))
 
-        # niszczenie statku kiedy uderzy w asteroide
+        # destroying spaceship when it hits asteroids
         if self.spaceship:
             for asteroid in self.asteroids:
                 if asteroid.collides_with(self.spaceship):
-                    #self.spaceship = None
-                    self.spaceship.destroy(game=self)
-                    self.message = "You lost! Press Enter to restart!"
-
-                    self.game_over = True
+                    # self.spaceship = None
+                    if self.spaceship.destroy(game=self):
+                        self.message = "You lost! Press Enter to restart!"
+                        self.game_over = True
+                    self.asteroids.remove(asteroid)
                     break
 
-        # kolizja pocisku z asteroida
+        # destroying asteroid when it hits bullet
         for bullet in self.bullets[:]:
             for asteroid in self.asteroids[:]:
                 if asteroid.collides_with(bullet):
                     self.asteroids.remove(asteroid)
                     self.bullets.remove(bullet)
+                    if asteroid.size == 3:
+                        self.score += 10
+                    elif asteroid.size == 2:
+                        self.score += 20
+                    else:
+                        self.score += 30
                     asteroid.split()
                     break
 
-        # usuwanie pociskow ktore sa poza mapa
+        # removing bullets that are outside of the map
         for bullet in self.bullets[:]:
             if not self.screen.get_rect().collidepoint(bullet.position):
                 self.bullets.remove(bullet)
-        # wygrana
+        # winning the game
         if not self.asteroids and self.spaceship:
             self.message_color = "green"
             self.message = "You won!"
@@ -149,9 +156,16 @@ class Asteroidy:
         if self.message:
             print_text(self.screen, self.message, 50, 50, 64, True, self.message_color)
 
+        print_text(self.screen, "Score = " + str(self.score), 10, 10, 48, False, (255, 255, 255))
+
+        if self.spaceship:
+            temp = "Lives = " + str(self.spaceship.lives)
+        else:
+            temp = "Lives = 0"
+        print_text(self.screen, temp, 10, 50, 48, False, (255, 255, 255))
+
         pygame.display.flip()
         self.clock.tick(60)
-
 
     def _get_game_objects(self):
         game_objects = [*self.asteroids, *self.bullets]
