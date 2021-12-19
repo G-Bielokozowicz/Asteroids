@@ -22,6 +22,7 @@ class Asteroidy:
         self.count = 0
         self.menu_mode = True
         self.game_over = False
+
         self._asteroid_spawn(amount=6)
 
     def _init_pygame(self):
@@ -51,7 +52,9 @@ class Asteroidy:
             self.game_over = False
             self.message = ""
             self.asteroids.clear()
+            self.bullets.clear()
             self._asteroid_spawn(amount=6)
+
 
     # spawn asteroidow
     def _asteroid_spawn(self, amount):
@@ -112,8 +115,10 @@ class Asteroidy:
         if self.spaceship:
             for asteroid in self.asteroids:
                 if asteroid.collides_with(self.spaceship):
-                    self.spaceship = None
+                    #self.spaceship = None
+                    self.spaceship.destroy(game=self)
                     self.message = "You lost! Press Enter to restart!"
+
                     self.game_over = True
                     break
 
@@ -146,6 +151,7 @@ class Asteroidy:
 
         pygame.display.flip()
         self.clock.tick(60)
+
 
     def _get_game_objects(self):
         game_objects = [*self.asteroids, *self.bullets]

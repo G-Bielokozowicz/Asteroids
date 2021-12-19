@@ -35,6 +35,7 @@ class Spaceship(GameObject):
     def __init__(self, position, create_bullet_callback):
         self.create_bullet_callback = create_bullet_callback
         self.laser_sound = load_sound("laser")
+        self.spaceship_destroy_sound = load_sound("spaceship_destroy")
         self.direction = Vector2(UP)
         super().__init__(position, load_sprite("spaceship"), Vector2(0))
 
@@ -56,7 +57,7 @@ class Spaceship(GameObject):
         # for i in range(-50, 51, 50):
         #     bullet = Bullet(bullet_position, bullet_velocity, i)
         #     self.create_bullet_callback(bullet)
-        # self.laser_sound.play()
+        self.laser_sound.play()
 
     def draw(self, surface):
         angle = self.direction.angle_to(UP)
@@ -65,11 +66,16 @@ class Spaceship(GameObject):
         blit_position = self.position - rotated_surface_size * 0.5
         surface.blit(rotated_surface, blit_position)
 
+    def destroy(self, game):
+        game.spaceship = None
+        self.spaceship_destroy_sound.play()
+
 
 class Asteroid(GameObject):
     def __init__(self, position, create_asteroid_callback, size=3):
         self.create_asteroid_callback = create_asteroid_callback
         self.size = size
+        self.asteroid_destroy_sound = load_sound("asteroid_destroy")
         size_to_scale = {
             3: 1,
             2: 0.5,
@@ -80,6 +86,7 @@ class Asteroid(GameObject):
         super().__init__(position, sprite, get_random_velocity(1, 3))
 
     def split(self):
+        self.asteroid_destroy_sound.play()
         if self.size > 1:
             for _ in range(2):
                 asteroid = Asteroid(self.position, self.create_asteroid_callback, self.size - 1)
