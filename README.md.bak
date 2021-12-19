@@ -1,4 +1,4 @@
 # pjf
 Projekt na pjf
 Working directory -> Asteroidy <br />
-Script Path -> Asteroidy\asteroids_games\__main__.py
+Script Path -> Asteroidy\asteroids_games\\__main\\__.py
