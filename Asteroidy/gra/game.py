@@ -1,5 +1,5 @@
 import pygame
-import time
+# import time
 from pygame import Color
 from utils import load_sprite, get_random_position, print_text
 
@@ -7,7 +7,7 @@ from models import Spaceship, Asteroid
 
 
 class Asteroidy:
-    MIN_ASTEROID_DISTANCE = 250
+    MIN_ASTEROID_DISTANCE = 300
 
     def __init__(self):
         self._init_pygame()
@@ -15,21 +15,14 @@ class Asteroidy:
         self.screen = pygame.display.set_mode((1600, 900))
         self.background = load_sprite("space", False)
         self.message = ""
-        self.message_color = Color("tomato")
+        self.message_color = Color("red")
         self.asteroids = []
         self.bullets = []
         self.spaceship = Spaceship((800, 450), self.bullets.append)
         self.count = 0
         self.menu_mode = True
         self.game_over = False
-
-        for _ in range(6):
-            while True:
-                position = get_random_position(self.screen)
-                if position.distance_to(self.spaceship.position) > self.MIN_ASTEROID_DISTANCE:
-                    break
-
-            self.asteroids.append(Asteroid(position, self.asteroids.append))
+        self._asteroid_spawn(amount=6)
 
     def _init_pygame(self):
         pygame.init()
@@ -39,6 +32,7 @@ class Asteroidy:
     def menu(self):
         while self.menu_mode:
             self.screen.fill((0, 0, 0))
+            #self.screen.blit(self.background, (0, 0))
             start_game_text = 'Press Enter to start the game!'
             print_text(self.screen, start_game_text, 50, 50, 64, True, (255, 255, 255))
             pygame.display.flip()
@@ -49,6 +43,24 @@ class Asteroidy:
                 if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
                     self.menu_mode = False
                     self.main_loop()
+
+    # restart gry
+    def _restart(self):
+        if self.game_over:
+            self.spaceship = Spaceship((800, 450), self.bullets.append)
+            self.game_over = False
+            self.message = ""
+            self.asteroids.clear()
+            self._asteroid_spawn(amount=6)
+
+    # spawn asteroidow
+    def _asteroid_spawn(self, amount):
+        for _ in range(amount):
+            while True:
+                position = get_random_position(self.screen)
+                if position.distance_to(self.spaceship.position) > self.MIN_ASTEROID_DISTANCE:
+                    break
+            self.asteroids.append(Asteroid(position, self.asteroids.append))
 
     # gra
     def main_loop(self):
@@ -62,9 +74,13 @@ class Asteroidy:
     def _handle_input(self):
         for event in pygame.event.get():
             # wyjscie z gry
+            if self.game_over:
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
+                    self._restart()
             if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
                 quit()
             # strzelanie
+
             elif self.spaceship and event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
                 self.spaceship.shoot()
 
@@ -97,9 +113,10 @@ class Asteroidy:
             for asteroid in self.asteroids:
                 if asteroid.collides_with(self.spaceship):
                     self.spaceship = None
-                    self.message = "You lost!"
+                    self.message = "You lost! Press Enter to restart!"
                     self.game_over = True
                     break
+
         # kolizja pocisku z asteroida
         for bullet in self.bullets[:]:
             for asteroid in self.asteroids[:]:
@@ -117,6 +134,7 @@ class Asteroidy:
         if not self.asteroids and self.spaceship:
             self.message_color = "green"
             self.message = "You won!"
+            self.game_over = True
 
     def _draw(self):
         self.screen.blit(self.background, (0, 0))
