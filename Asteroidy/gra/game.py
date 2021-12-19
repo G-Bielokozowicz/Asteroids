@@ -85,7 +85,7 @@ class Asteroidy:
                 quit()
 
             # shooting
-            elif self.spaceship and event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+            elif self.game_over is False and self.spaceship and event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
                 self.spaceship.shoot()
 
         # moving the spaceship
