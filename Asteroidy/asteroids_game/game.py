@@ -83,24 +83,6 @@ class Asteroidy:
             if is_key_pressed[pygame.K_UP]:
                 self.spaceship.accelerate()
 
-    def _game_loss(self):
-        self.message = "You lost! Press Enter to restart!"
-        self.game_over = True
-        music.pause()
-
-    # game restart
-    def _restart(self):
-        if self.game_over:
-            self.spaceship = Spaceship((800, 450), self.bullets.append)
-            self.game_over = False
-            self.message = ""
-            self.asteroids.clear()
-            self.bullets.clear()
-            self.upgrades.clear()
-            self.score = 0
-            self._asteroid_spawn(amount=4)
-            music.unpause()
-
     def _process_game_logic(self):
         for game_object in self._get_game_objects():
             game_object.move(self.screen)
@@ -134,6 +116,7 @@ class Asteroidy:
 
         # destroying asteroid when it hits bullet
         for bullet in self.bullets[:]:
+
             for asteroid in self.asteroids[:]:
                 if asteroid.collides_with(bullet):
                     self.asteroids.remove(asteroid)
@@ -165,6 +148,25 @@ class Asteroidy:
         #     self.message_color = "green"
         #     self.message = "You won!"
         #     self.game_over = True
+
+    def _game_loss(self):
+        self.message = "You lost! Press Enter to restart!"
+        self.game_over = True
+        music.pause()
+
+        # game restart
+
+    def _restart(self):
+        if self.game_over:
+            self.spaceship = Spaceship((800, 450), self.bullets.append)
+            self.game_over = False
+            self.message = ""
+            self.asteroids.clear()
+            self.bullets.clear()
+            self.upgrades.clear()
+            self.score = 0
+            self._asteroid_spawn(amount=4)
+            music.unpause()
 
     def _draw(self):
 
