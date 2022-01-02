@@ -41,6 +41,8 @@ class Spaceship(GameObject):
         self.spaceship_destroy_sound = load_sound("spaceship_destroy")
         self.direction = Vector2(UP)
         self.lives = self.STARTING_LIVES
+        self.shotgun = False
+        self.shotgunRemaining = 0
         super().__init__(position, load_sprite("spaceship"), Vector2(0))
 
     def rotate(self, clockwise=True):
@@ -57,10 +59,15 @@ class Spaceship(GameObject):
         bullet_position = self.position
         bullet_velocity = self.direction * self.BULLET_SPEED + self.velocity
         bullet = Bullet(bullet_position, bullet_velocity, 0)
-        self.create_bullet_callback(bullet)
-        # for i in range(-50, 51, 50):
-        #     bullet = Bullet(bullet_position, bullet_velocity, i)
-        #     self.create_bullet_callback(bullet)
+        if self.shotgun is False:
+            self.create_bullet_callback(bullet)
+        else:
+            for i in range(-30, 31, 30):
+                bullet = Bullet(bullet_position, bullet_velocity, i)
+                self.create_bullet_callback(bullet)
+            self.shotgunRemaining -= 1
+            if self.shotgunRemaining <= 0:
+                self.shotgun = False
         self.laser_sound.play()
 
     def draw(self, surface):
@@ -113,3 +120,15 @@ class Bullet(GameObject):
 
     def move(self, surface):
         self.position = self.position + self.velocity
+
+
+class Upgrade(GameObject):
+    def __init__(self, position, ship):
+        super().__init__(position, load_sprite("upgrade"), 0)
+        self.ship = ship
+        self.sound = load_sound("upgrade")
+
+    def destroy(self):
+        self.ship.shotgun = True
+        self.ship.shotgunRemaining += 10
+        self.sound.play()

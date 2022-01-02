@@ -3,7 +3,7 @@ import pygame
 from pygame import Color
 from utils import load_sprite, get_random_position, print_text
 
-from models import Spaceship, Asteroid
+from models import Spaceship, Asteroid, Upgrade
 
 
 class Asteroidy:
@@ -23,6 +23,7 @@ class Asteroidy:
         self.count = 0
         self.menu_mode = True
         self.game_over = False
+        self.upgrades = [Upgrade(get_random_position(self.screen), self.spaceship)]
 
         self._asteroid_spawn(amount=6)
 
@@ -39,7 +40,7 @@ class Asteroidy:
             print_text(self.screen, start_game_text, 50, 50, 64, True, (255, 255, 255))
             pygame.display.flip()
             for event in pygame.event.get():
-                # wyjscie z gry
+                # exiting the game
                 if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
                     quit()
                 if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
@@ -138,6 +139,15 @@ class Asteroidy:
                     asteroid.split()
                     break
 
+        # getting the upgrade
+        for bullet in self.bullets[:]:
+            for upgrade in self.upgrades[:]:
+                if upgrade.collides_with(bullet):
+                    upgrade.destroy()
+                    self.upgrades.remove(upgrade)
+                    self.bullets.remove(bullet)
+                    break
+
         # removing bullets that are outside of the map
         for bullet in self.bullets[:]:
             if not self.screen.get_rect().collidepoint(bullet.position):
@@ -149,6 +159,7 @@ class Asteroidy:
             self.game_over = True
 
     def _draw(self):
+
         self.screen.blit(self.background, (0, 0))
         for game_object in self._get_game_objects():
             game_object.draw(self.screen)
@@ -160,15 +171,18 @@ class Asteroidy:
 
         if self.spaceship:
             temp = "Lives = " + str(self.spaceship.lives)
+            shotgunRemaining = "Shotgun: " + str(self.spaceship.shotgunRemaining)
         else:
             temp = "Lives = 0"
+
         print_text(self.screen, temp, 10, 50, 48, False, (255, 255, 255))
+        print_text(self.screen, shotgunRemaining, 10, 100, 48, False, (255, 255, 255))
 
         pygame.display.flip()
         self.clock.tick(60)
 
     def _get_game_objects(self):
-        game_objects = [*self.asteroids, *self.bullets]
+        game_objects = [*self.asteroids, *self.bullets, *self.upgrades]
         if self.spaceship:
             game_objects.append(self.spaceship)
         return game_objects
