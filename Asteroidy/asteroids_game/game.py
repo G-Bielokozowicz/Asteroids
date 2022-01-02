@@ -27,6 +27,7 @@ class Asteroidy:
         self.game_over = False
         self.upgrades = []
         self._asteroid_spawn(amount=4)
+        self.difficulty_multiplier = 1
 
     def _init_pygame(self):
         pygame.init()
@@ -107,8 +108,14 @@ class Asteroidy:
         self.count += 1
         if self.count > 1000:
             self.count = 1
-        if self.count % 400 == 0:
-            self._asteroid_spawn(1)
+        if self.count % 500 == 0:
+            self._asteroid_spawn(1 * self.difficulty_multiplier)
+
+        if self.score > 500:
+            self.difficulty_multiplier = 2
+        if self.score > 2000:
+            self.difficulty_multiplier = 3
+
         if len(self.asteroids) == 0:
             self._asteroid_spawn(2)
         if len(self.upgrades) == 0:
