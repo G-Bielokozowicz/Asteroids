@@ -5,6 +5,7 @@ from pygame import font
 from pygame.image import load
 from pygame.math import Vector2
 from pygame.mixer import Sound
+
 from pygame import Color
 
 
@@ -21,6 +22,7 @@ def load_sprite(name, with_alpha=True):
 def load_sound(name):
     path = f"assets/sounds/{name}.wav"
     return Sound(path)
+
 
 
 def wrap_position(position, surface):
