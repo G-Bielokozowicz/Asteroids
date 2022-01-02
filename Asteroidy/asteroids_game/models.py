@@ -96,8 +96,8 @@ class Asteroid(GameObject):
         self.asteroid_destroy_sound = load_sound("asteroid_destroy")
         size_to_scale = {
             3: 1,
-            2: 0.5,
-            1: 0.25,
+            2: 0.6,
+            1: 0.3,
         }
         rotation = random.randrange(0, 360, 10)
         scale = size_to_scale[size]
@@ -123,8 +123,8 @@ class Bullet(GameObject):
 
 
 class Upgrade(GameObject):
-    def __init__(self, position, ship):
-        super().__init__(position, load_sprite("upgrade"), 0)
+    def __init__(self, position, ship, velocity):
+        super().__init__(position, load_sprite("upgrade"), velocity)
         self.ship = ship
         self.sound = load_sound("upgrade")
 

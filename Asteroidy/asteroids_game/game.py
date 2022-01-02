@@ -1,3 +1,5 @@
+import random
+
 import pygame
 # import time
 from pygame import Color
@@ -20,12 +22,11 @@ class Asteroidy:
         self.bullets = []
         self.score = 0
         self.spaceship = Spaceship((800, 450), self.bullets.append)
-        self.count = 0
+        self.count = 1
         self.menu_mode = True
         self.game_over = False
-        self.upgrades = [Upgrade(get_random_position(self.screen), self.spaceship)]
-
-        self._asteroid_spawn(amount=6)
+        self.upgrades = []
+        self._asteroid_spawn(amount=4)
 
     def _init_pygame(self):
         pygame.init()
@@ -55,8 +56,9 @@ class Asteroidy:
             self.message = ""
             self.asteroids.clear()
             self.bullets.clear()
+            self.upgrades.clear()
             self.score = 0
-            self._asteroid_spawn(amount=6)
+            self._asteroid_spawn(amount=4)
 
     # spawning asteroids
     def _asteroid_spawn(self, amount):
@@ -102,16 +104,16 @@ class Asteroidy:
     def _process_game_logic(self):
         for game_object in self._get_game_objects():
             game_object.move(self.screen)
-        # self.count += 1
-        # if self.count > 1000:
-        #     self.count = 1
-        # if self.count % 50 == 0:
-        #     if self.spaceship:
-        #         while True:
-        #             position = get_random_position(self.screen)
-        #             if position.distance_to(self.spaceship.position) > self.MIN_ASTEROID_DISTANCE:
-        #                 break
-        #         self.asteroids.append(Asteroid(position))
+        self.count += 1
+        if self.count > 1000:
+            self.count = 1
+        if self.count % 400 == 0:
+            self._asteroid_spawn(1)
+        if len(self.asteroids) == 0:
+            self._asteroid_spawn(2)
+        if len(self.upgrades) == 0:
+            if self.count % 900 == 0:
+                self.upgrades.append(Upgrade(get_random_position(self.screen), self.spaceship, random.randrange(1, 2)))
 
         # destroying spaceship when it hits asteroids
         if self.spaceship:
@@ -153,10 +155,10 @@ class Asteroidy:
             if not self.screen.get_rect().collidepoint(bullet.position):
                 self.bullets.remove(bullet)
         # winning the game
-        if not self.asteroids and self.spaceship:
-            self.message_color = "green"
-            self.message = "You won!"
-            self.game_over = True
+        # if not self.asteroids and self.spaceship:
+        #     self.message_color = "green"
+        #     self.message = "You won!"
+        #     self.game_over = True
 
     def _draw(self):
 
@@ -171,12 +173,13 @@ class Asteroidy:
 
         if self.spaceship:
             temp = "Lives = " + str(self.spaceship.lives)
-            shotgunRemaining = "Shotgun: " + str(self.spaceship.shotgunRemaining)
+            temp2 = "Shotgun = " + str(self.spaceship.shotgunRemaining)
         else:
             temp = "Lives = 0"
+            temp2 = "Shotgun = 0 "
 
         print_text(self.screen, temp, 10, 50, 48, False, (255, 255, 255))
-        print_text(self.screen, shotgunRemaining, 10, 100, 48, False, (255, 255, 255))
+        print_text(self.screen, temp2, 10, 100, 48, False, (255, 255, 255))
 
         pygame.display.flip()
         self.clock.tick(60)
