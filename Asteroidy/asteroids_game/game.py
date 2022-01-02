@@ -16,6 +16,7 @@ class Asteroidy:
         self.clock = pygame.time.Clock()
         self.screen = pygame.display.set_mode((1600, 900))
         self.background = load_sprite("space", False)
+        self.startbg = load_sprite("start", False)
         self.message = ""
         self.message_color = Color("red")
         self.asteroids = []
@@ -25,7 +26,7 @@ class Asteroidy:
         self.count = 1
         self.menu_mode = True
         self.game_over = False
-        self.upgrades = []
+        self.upgrades = [Upgrade(get_random_position(self.screen), self.spaceship, random.randrange(1, 2))]
         self._asteroid_spawn(amount=4)
         self.difficulty_multiplier = 1
 
@@ -36,10 +37,10 @@ class Asteroidy:
     # main menu
     def menu(self):
         while self.menu_mode:
-            self.screen.fill((0, 0, 0))
-            # self.screen.blit(self.background, (0, 0))
-            start_game_text = 'Press Enter to start the game!'
-            print_text(self.screen, start_game_text, 50, 50, 64, True, (255, 255, 255))
+            #self.screen.fill((0, 0, 0))
+            self.screen.blit(self.startbg, (0, 0))
+            #start_game_text = 'Press Enter to start the game!'
+            #print_text(self.screen, start_game_text, 50, 50, 64, True, (255, 255, 255))
             pygame.display.flip()
             for event in pygame.event.get():
                 # exiting the game
