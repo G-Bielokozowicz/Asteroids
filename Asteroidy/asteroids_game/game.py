@@ -37,10 +37,7 @@ class Asteroidy:
     # main menu
     def menu(self):
         while self.menu_mode:
-            #self.screen.fill((0, 0, 0))
             self.screen.blit(self.startbg, (0, 0))
-            #start_game_text = 'Press Enter to start the game!'
-            #print_text(self.screen, start_game_text, 50, 50, 64, True, (255, 255, 255))
             pygame.display.flip()
             for event in pygame.event.get():
                 # exiting the game
@@ -107,7 +104,7 @@ class Asteroidy:
         for game_object in self._get_game_objects():
             game_object.move(self.screen)
         self.count += 1
-        if self.count > 1000:
+        if self.count > 10000:
             self.count = 1
         if self.count % 500 == 0:
             self._asteroid_spawn(1 * self.difficulty_multiplier)
@@ -120,7 +117,7 @@ class Asteroidy:
         if len(self.asteroids) == 0:
             self._asteroid_spawn(2)
         if len(self.upgrades) == 0:
-            if self.count % 900 == 0:
+            if self.count == 5000:
                 self.upgrades.append(Upgrade(get_random_position(self.screen), self.spaceship, random.randrange(1, 2)))
 
         # destroying spaceship when it hits asteroids
@@ -171,11 +168,6 @@ class Asteroidy:
     def _draw(self):
 
         self.screen.blit(self.background, (0, 0))
-        for game_object in self._get_game_objects():
-            game_object.draw(self.screen)
-
-        if self.message:
-            print_text(self.screen, self.message, 50, 50, 64, True, self.message_color)
 
         print_text(self.screen, "Score = " + str(self.score), 10, 10, 48, False, (255, 255, 255))
 
@@ -188,6 +180,14 @@ class Asteroidy:
 
         print_text(self.screen, temp, 10, 50, 48, False, (255, 255, 255))
         print_text(self.screen, temp2, 10, 100, 48, False, (255, 255, 255))
+
+        for game_object in self._get_game_objects():
+            game_object.draw(self.screen)
+
+        if self.message:
+            print_text(self.screen, self.message, 50, 50, 64, True, self.message_color)
+
+
 
         pygame.display.flip()
         self.clock.tick(60)

@@ -68,6 +68,7 @@ class Spaceship(GameObject):
             self.shotgunRemaining -= 1
             if self.shotgunRemaining <= 0:
                 self.shotgun = False
+
         self.laser_sound.play()
 
     def draw(self, surface):
