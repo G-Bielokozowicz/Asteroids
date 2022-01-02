@@ -29,7 +29,6 @@ class Asteroidy:
         self.game_over = False
         self.upgrades = [Upgrade(get_random_position(self.screen), self.spaceship, random.randrange(1, 2))]
         self._asteroid_spawn(amount=4)
-        self.difficulty_multiplier = 1
         music.load("assets/sounds/soundtrack.wav")
         music.set_volume(0.1)
         music.play(-1, fade_ms=1000)
@@ -90,12 +89,7 @@ class Asteroidy:
         if self.count > 10000:
             self.count = 1
         if self.count % 500 == 0:
-            self._asteroid_spawn(1 * self.difficulty_multiplier)
-
-        if self.score > 500:
-            self.difficulty_multiplier = 2
-        if self.score > 2000:
-            self.difficulty_multiplier = 3
+            self._asteroid_spawn(1 + self.score // 500)
 
         if len(self.asteroids) == 0:
             self._asteroid_spawn(2)
