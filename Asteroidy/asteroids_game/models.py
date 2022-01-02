@@ -43,6 +43,7 @@ class Spaceship(GameObject):
         self.lives = self.STARTING_LIVES
         self.shotgun = False
         self.shotgunRemaining = 0
+
         super().__init__(position, load_sprite("spaceship"), Vector2(0))
 
     def rotate(self, clockwise=True):
@@ -58,12 +59,12 @@ class Spaceship(GameObject):
     def shoot(self):
         bullet_position = self.position
         bullet_velocity = self.direction * self.BULLET_SPEED + self.velocity
-        bullet = Bullet(bullet_position, bullet_velocity, 0)
+        bullet = Bullet(bullet_position, bullet_velocity, 0, self.direction.angle_to(UP))
         if self.shotgun is False:
             self.create_bullet_callback(bullet)
         else:
             for i in range(-30, 31, 30):
-                bullet = Bullet(bullet_position, bullet_velocity, i)
+                bullet = Bullet(bullet_position, bullet_velocity, i, self.direction.angle_to(UP)-i)
                 self.create_bullet_callback(bullet)
             self.shotgunRemaining -= 1
             if self.shotgunRemaining <= 0:
@@ -114,8 +115,9 @@ class Asteroid(GameObject):
 
 
 class Bullet(GameObject):
-    def __init__(self, position, velocity, rotation):
-        super().__init__(position, load_sprite("bullet"), velocity)
+    def __init__(self, position, velocity, rotation, sprite_rotation):
+        sprite = rotozoom(load_sprite("bullet2"), sprite_rotation, 1)
+        super().__init__(position, sprite, velocity)
         # rotation of bullet when fired
         self.velocity.rotate_ip(rotation)
 
