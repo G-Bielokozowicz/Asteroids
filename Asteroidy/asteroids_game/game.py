@@ -1,7 +1,4 @@
-import random
-
 import pygame
-# import time
 from pygame import Color
 from pygame.mixer import music
 from utils import load_sprite, get_random_position, print_text
@@ -27,7 +24,7 @@ class Asteroidy:
         self.count = 1
         self.menu_mode = True
         self.game_over = False
-        self.upgrades = [Upgrade(get_random_position(self.screen), self.spaceship, random.randrange(1, 2))]
+        self.upgrades = [Upgrade(get_random_position(self.screen), self.spaceship)]
         self._asteroid_spawn(amount=4)
         music.load("assets/sounds/soundtrack.wav")
         music.set_volume(0.1)
@@ -51,7 +48,7 @@ class Asteroidy:
                     self.main_loop()
 
     # spawning asteroids
-    def _asteroid_spawn(self, amount):
+    def _asteroid_spawn(self, amount: int):
         for _ in range(amount):
             while True:
                 position = get_random_position(self.screen)
@@ -95,7 +92,7 @@ class Asteroidy:
             self._asteroid_spawn(2)
         if len(self.upgrades) == 0:
             if self.count == 5000:
-                self.upgrades.append(Upgrade(get_random_position(self.screen), self.spaceship, random.randrange(1, 2)))
+                self.upgrades.append(Upgrade(get_random_position(self.screen), self.spaceship))
 
         # destroying spaceship when it hits asteroids
         # game over

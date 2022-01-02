@@ -1,3 +1,6 @@
+from typing import Callable, Any, Type
+
+from pygame import Surface
 from pygame.math import Vector2
 from pygame.transform import rotozoom
 import random
@@ -8,21 +11,20 @@ UP = Vector2(0, -1)  # wektor wskazujacy do gory
 
 
 class GameObject:
-    def __init__(self, position, sprite, velocity):
+    def __init__(self, position: [int, int], sprite: Surface, velocity:Vector2):
         self.position = Vector2(position)
         self.sprite = sprite
         self.radius = sprite.get_width() / 2
         self.velocity = Vector2(velocity)
 
-    def draw(self, surface):
-        blit_position = self.position - Vector2(
-            self.radius)
+    def draw(self, surface: Surface):
+        blit_position = self.position - Vector2(self.radius)
         surface.blit(self.sprite, blit_position)
 
-    def move(self, surface):
+    def move(self, surface: Surface):
         self.position = wrap_position(self.position + self.velocity, surface)
 
-    def collides_with(self, other_obj):
+    def collides_with(self, other_obj: Any) -> bool:
         distance = self.position.distance_to(other_obj.position)
         return distance < self.radius + other_obj.radius
 
@@ -34,7 +36,7 @@ class Spaceship(GameObject):
     BULLET_SPEED = 4  # bullet speed
     STARTING_LIVES = 3  # starting ammount of lives
 
-    def __init__(self, position, create_bullet_callback):
+    def __init__(self, position: [int, int], create_bullet_callback: Callable):
         self.create_bullet_callback = create_bullet_callback
         self.laser_sound = load_sound("laser")
         self.spaceship_hit_asteroid = load_sound("asteroid_hit")
@@ -64,22 +66,21 @@ class Spaceship(GameObject):
             self.create_bullet_callback(bullet)
         else:
             for i in range(-30, 31, 30):
-                bullet = Bullet(bullet_position, bullet_velocity, i, self.direction.angle_to(UP)-i)
+                bullet = Bullet(bullet_position, bullet_velocity, i, self.direction.angle_to(UP) - i)
                 self.create_bullet_callback(bullet)
             self.shotgunRemaining -= 1
             if self.shotgunRemaining <= 0:
                 self.shotgun = False
-
         self.laser_sound.play()
 
-    def draw(self, surface):
+    def draw(self, surface: Surface):
         angle = self.direction.angle_to(UP)
         rotated_surface = rotozoom(self.sprite, angle, 1.0)
         rotated_surface_size = Vector2(rotated_surface.get_size())
         blit_position = self.position - rotated_surface_size * 0.5
         surface.blit(rotated_surface, blit_position)
 
-    def destroy(self, game):
+    def destroy(self, game) -> bool:
         if self.lives > 1:
             self.lives -= 1
             self.spaceship_hit_asteroid.play()
@@ -92,7 +93,7 @@ class Spaceship(GameObject):
 
 
 class Asteroid(GameObject):
-    def __init__(self, position, create_asteroid_callback, size=3):
+    def __init__(self, position: Vector2, create_asteroid_callback: callable, size: int = 3):
         self.create_asteroid_callback = create_asteroid_callback
         self.size = size
         self.asteroid_destroy_sound = load_sound("asteroid_destroy")
@@ -115,19 +116,19 @@ class Asteroid(GameObject):
 
 
 class Bullet(GameObject):
-    def __init__(self, position, velocity, rotation, sprite_rotation):
+    def __init__(self, position: Vector2, velocity: Vector2, rotation: int, sprite_rotation: float):
         sprite = rotozoom(load_sprite("bullet2"), sprite_rotation, 1)
         super().__init__(position, sprite, velocity)
         # rotation of bullet when fired
         self.velocity.rotate_ip(rotation)
 
-    def move(self, surface):
+    def move(self, surface: Surface):
         self.position = self.position + self.velocity
 
 
 class Upgrade(GameObject):
-    def __init__(self, position, ship, velocity):
-        super().__init__(position, load_sprite("upgrade"), velocity)
+    def __init__(self, position: Vector2, ship):
+        super().__init__(position, load_sprite("upgrade"), get_random_velocity(1, 3))
         self.ship = ship
         self.sound = load_sound("upgrade")
 
