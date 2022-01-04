@@ -1,8 +1,9 @@
-from typing import Callable, Any, Type
+from typing import Callable, Any
 
 from pygame import Surface
 from pygame.math import Vector2
 from pygame.transform import rotozoom
+
 import random
 
 from utils import get_random_velocity, load_sprite, load_sound, wrap_position
@@ -11,7 +12,7 @@ UP = Vector2(0, -1)  # wektor wskazujacy do gory
 
 
 class GameObject:
-    def __init__(self, position: [int, int], sprite: Surface, velocity:Vector2):
+    def __init__(self, position: [int, int], sprite: Surface, velocity: Vector2):
         self.position = Vector2(position)
         self.sprite = sprite
         self.radius = sprite.get_width() / 2
@@ -45,8 +46,9 @@ class Spaceship(GameObject):
         self.lives = self.STARTING_LIVES
         self.shotgun = False
         self.shotgunRemaining = 0
+        self.shielded = False
 
-        super().__init__(position, load_sprite("spaceship"), Vector2(0))
+        super().__init__(position, load_sprite("spaceship2"), Vector2(0))
 
     def rotate(self, clockwise=True):
         sign = 1 if clockwise else -1
@@ -81,15 +83,20 @@ class Spaceship(GameObject):
         surface.blit(rotated_surface, blit_position)
 
     def destroy(self, game) -> bool:
-        if self.lives > 1:
-            self.lives -= 1
-            self.spaceship_hit_asteroid.play()
-            return False
-        elif self.lives == 1:
-            self.lives -= -1
-            game.spaceship = None
+        if not self.shielded:
+            if self.lives > 1:
+                self.lives -= 1
+                self.spaceship_hit_asteroid.play()
+                return False
+            elif self.lives == 1:
+                self.lives -= -1
+                game.spaceship = None
+                self.spaceship_destroy_sound.play()
+                return True
+        else:
+            self.shielded = False
             self.spaceship_destroy_sound.play()
-            return True
+            return False
 
 
 class Asteroid(GameObject):
@@ -126,9 +133,9 @@ class Bullet(GameObject):
         self.position = self.position + self.velocity
 
 
-class Upgrade(GameObject):
+class Shotgun(GameObject):
     def __init__(self, position: Vector2, ship):
-        super().__init__(position, load_sprite("upgrade"), get_random_velocity(1, 3))
+        super().__init__(position, load_sprite("shotgun"), get_random_velocity(1, 3))
         self.ship = ship
         self.sound = load_sound("upgrade")
 
@@ -136,3 +143,16 @@ class Upgrade(GameObject):
         self.ship.shotgun = True
         self.ship.shotgunRemaining += 10
         self.sound.play()
+
+
+class Shield(GameObject):
+    def __init__(self, position: Vector2, ship):
+        super().__init__(position, load_sprite("shield"), get_random_velocity(1, 3))
+        self.ship = ship
+        self.sound = load_sound("upgrade")
+
+    def destroy(self):
+        self.ship.shielded = True
+        self.sound.play()
+
+

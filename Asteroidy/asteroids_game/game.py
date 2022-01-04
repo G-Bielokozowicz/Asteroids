@@ -3,7 +3,9 @@ from pygame import Color
 from pygame.mixer import music
 from utils import load_sprite, get_random_position, print_text
 
-from models import Spaceship, Asteroid, Upgrade
+from models import Spaceship, Asteroid, Shotgun, Shield
+
+import random
 
 
 class Asteroidy:
@@ -24,7 +26,7 @@ class Asteroidy:
         self.count = 1
         self.menu_mode = True
         self.game_over = False
-        self.upgrades = [Upgrade(get_random_position(self.screen), self.spaceship)]
+        self.upgrades = [self._get_random_upgrade()]
         self._asteroid_spawn(amount=4)
         music.load("assets/sounds/soundtrack.wav")
         music.set_volume(0.1)
@@ -55,6 +57,13 @@ class Asteroidy:
                 if position.distance_to(self.spaceship.position) > self.MIN_ASTEROID_DISTANCE:
                     break
             self.asteroids.append(Asteroid(position, self.asteroids.append))
+
+    def _get_random_upgrade(self):
+        upgrade_list = {
+            1: Shield(get_random_position(self.screen), self.spaceship),
+            2: Shotgun(get_random_position(self.screen), self.spaceship)
+        }
+        return upgrade_list[random.randint(1, 2)]
 
     def _handle_input(self):
         for event in pygame.event.get():
@@ -91,8 +100,8 @@ class Asteroidy:
         if len(self.asteroids) == 0:
             self._asteroid_spawn(2)
         if len(self.upgrades) == 0:
-            if self.count == 5000:
-                self.upgrades.append(Upgrade(get_random_position(self.screen), self.spaceship))
+            if self.count % 4000 == 0:
+                self.upgrades.append(self._get_random_upgrade())
 
         # destroying spaceship when it hits asteroids
         # game over
