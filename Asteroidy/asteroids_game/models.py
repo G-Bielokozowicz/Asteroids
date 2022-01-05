@@ -43,13 +43,18 @@ class Spaceship(GameObject):
         self.spaceship_hit_asteroid = load_sound("asteroid_hit")
         self.spaceship_destroy_sound = load_sound("spaceship_destroy")
         self.spaceship_hit_shielded = load_sound("shielded_hit")
+        self.default_sprite = load_sprite("spaceship")
+        self.default_accelerating = load_sprite("spaceship_accelerating")
+        self.shielded_sprite = load_sprite("spaceship_shielded")
+        self.shielded_accelerating = load_sprite("spaceship_shielded_accelerating")
         self.direction = Vector2(UP)
         self.lives = self.STARTING_LIVES
         self.shotgun = False
         self.shotgunRemaining = 0
-        self.shielded = False
+        self.isShielded = False
+        self.accelerating = False
 
-        super().__init__(position, load_sprite("spaceship"), Vector2(0))
+        super().__init__(position, self.default_sprite, Vector2(0))
 
     def rotate(self, clockwise=True):
         sign = 1 if clockwise else -1
@@ -60,6 +65,10 @@ class Spaceship(GameObject):
         self.velocity += self.direction * self.ACCELERATION
         if self.velocity.length() > self.MAX_SPEED:
             self.velocity.scale_to_length(self.MAX_SPEED)
+        if self.isShielded:
+            self.sprite = self.shielded_accelerating
+        else:
+            self.sprite = self.default_accelerating
 
     def shoot(self):
         bullet_position = self.position
@@ -84,7 +93,7 @@ class Spaceship(GameObject):
         surface.blit(rotated_surface, blit_position)
 
     def destroy(self, game) -> bool:
-        if not self.shielded:
+        if not self.isShielded:
             if self.lives > 1:
                 self.lives -= 1
                 self.spaceship_hit_asteroid.play()
@@ -95,8 +104,8 @@ class Spaceship(GameObject):
                 self.spaceship_destroy_sound.play()
                 return True
         else:
-            self.shielded = False
-            self.sprite = load_sprite("spaceship")
+            self.isShielded = False
+            self.sprite = self.default_sprite
             self.spaceship_hit_shielded.play()
             return False
 
@@ -154,8 +163,6 @@ class Shield(GameObject):
         self.sound = load_sound("upgrade")
 
     def destroy(self):
-        self.ship.shielded = True
-        self.ship.sprite = load_sprite("spaceship_shielded")
+        self.ship.isShielded = True
+        self.ship.sprite = self.ship.shielded_sprite
         self.sound.play()
-
-

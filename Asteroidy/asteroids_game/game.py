@@ -163,8 +163,8 @@ class Asteroidy:
             if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
                 quit()
 
-            # shooting
-            #elif self.game_over is False and self.spaceship and event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+                # shooting
+                # elif self.game_over is False and self.spaceship and event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
                 self.spaceship.shoot()
             elif self.spaceship and event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
                 self.spaceship.shoot()
@@ -178,6 +178,11 @@ class Asteroidy:
                 self.spaceship.rotate(clockwise=False)
             if is_key_pressed[pygame.K_UP]:
                 self.spaceship.accelerate()
+            else:
+                if self.spaceship.isShielded:
+                    self.spaceship.sprite = self.spaceship.shielded_sprite
+                else:
+                    self.spaceship.sprite = self.spaceship.default_sprite
 
     def _draw(self):
 
