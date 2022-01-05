@@ -26,7 +26,7 @@ class Asteroidy:
         self.count = 1
         self.menu_mode = True
         self.game_over = False
-        #self.upgrades = [self._get_random_upgrade()]
+        # self.upgrades = [self._get_random_upgrade()]
         self.upgrades = [Shield(get_random_position(self.screen), self.spaceship)]
         self._asteroid_spawn(amount=4)
         music.load("assets/sounds/soundtrack.wav")
@@ -65,29 +65,6 @@ class Asteroidy:
             2: Shotgun(get_random_position(self.screen), self.spaceship)
         }
         return upgrade_list[random.randint(1, 2)]
-
-    def _handle_input(self):
-        for event in pygame.event.get():
-            # exiting the game
-            if self.game_over:
-                if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
-                    self._restart()
-            if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
-                quit()
-
-            # shooting
-            elif self.game_over is False and self.spaceship and event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
-                self.spaceship.shoot()
-
-        # moving the spaceship
-        is_key_pressed = pygame.key.get_pressed()
-        if self.spaceship:
-            if is_key_pressed[pygame.K_RIGHT]:
-                self.spaceship.rotate(clockwise=True)
-            elif is_key_pressed[pygame.K_LEFT]:
-                self.spaceship.rotate(clockwise=False)
-            if is_key_pressed[pygame.K_UP]:
-                self.spaceship.accelerate()
 
     def _process_game_logic(self):
         for game_object in self._get_game_objects():
@@ -144,30 +121,63 @@ class Asteroidy:
         for bullet in self.bullets[:]:
             if not self.screen.get_rect().collidepoint(bullet.position):
                 self.bullets.remove(bullet)
-        # winning the game
-        # if not self.asteroids and self.spaceship:
-        #     self.message_color = "green"
-        #     self.message = "You won!"
-        #     self.game_over = True
 
     def _game_loss(self):
-        self.message = "You lost! Press Enter to restart!"
-        self.game_over = True
+        # self.game_over = True
         music.pause()
+        self._game_over_loop()
 
-        # game restart
+    def _game_over_loop(self):
+        while True:
+            self.message = "You lost! Press Enter to restart!"
+            print_text(self.screen, self.message, 10, 50, 48, True, (255, 255, 255))
+            self._draw()
+            for event in pygame.event.get():
+                # exiting the game
+                if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
+                    quit()
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
+                    self._restart()
+                    self.main_loop()
+
+    # game restart
     def _restart(self):
-        if self.game_over:
-            self.spaceship = Spaceship((800, 450), self.bullets.append)
-            self.game_over = False
-            self.message = ""
-            self.asteroids.clear()
-            self.bullets.clear()
-            self.upgrades.clear()
-            self.score = 0
-            self._asteroid_spawn(amount=4)
-            self.upgrades = [self._get_random_upgrade()]
-            music.unpause()
+        # if self.game_over:
+        self.spaceship = Spaceship((800, 450), self.bullets.append)
+        # self.game_over = False
+        self.message = ""
+        self.asteroids.clear()
+        self.bullets.clear()
+        self.upgrades.clear()
+        self.score = 0
+        self._asteroid_spawn(amount=4)
+        self.upgrades = [self._get_random_upgrade()]
+        music.unpause()
+
+    def _handle_input(self):
+        for event in pygame.event.get():
+            # exiting the game
+            # if self.game_over:
+            #     if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
+            #         self._restart()
+            if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
+                quit()
+
+            # shooting
+            #elif self.game_over is False and self.spaceship and event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+                self.spaceship.shoot()
+            elif self.spaceship and event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+                self.spaceship.shoot()
+
+        # moving the spaceship
+        is_key_pressed = pygame.key.get_pressed()
+        if self.spaceship:
+            if is_key_pressed[pygame.K_RIGHT]:
+                self.spaceship.rotate(clockwise=True)
+            elif is_key_pressed[pygame.K_LEFT]:
+                self.spaceship.rotate(clockwise=False)
+            if is_key_pressed[pygame.K_UP]:
+                self.spaceship.accelerate()
 
     def _draw(self):
 
@@ -206,6 +216,6 @@ class Asteroidy:
         while True:
             # handle input outside of if, so that it's possible to quit and restart the game
             self._handle_input()
-            if not self.game_over:
-                self._process_game_logic()
-                self._draw()
+            # if not self.game_over:
+            self._process_game_logic()
+            self._draw()
