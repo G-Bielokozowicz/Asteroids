@@ -42,6 +42,7 @@ class Spaceship(GameObject):
         self.laser_sound = load_sound("laser")
         self.spaceship_hit_asteroid = load_sound("asteroid_hit")
         self.spaceship_destroy_sound = load_sound("spaceship_destroy")
+        self.spaceship_hit_shielded = load_sound("shielded_hit")
         self.direction = Vector2(UP)
         self.lives = self.STARTING_LIVES
         self.shotgun = False
@@ -96,7 +97,7 @@ class Spaceship(GameObject):
         else:
             self.shielded = False
             self.sprite = load_sprite("spaceship")
-            self.spaceship_destroy_sound.play()
+            self.spaceship_hit_shielded.play()
             return False
 
 

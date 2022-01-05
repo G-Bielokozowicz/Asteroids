@@ -156,7 +156,6 @@ class Asteroidy:
         music.pause()
 
         # game restart
-
     def _restart(self):
         if self.game_over:
             self.spaceship = Spaceship((800, 450), self.bullets.append)
@@ -167,6 +166,7 @@ class Asteroidy:
             self.upgrades.clear()
             self.score = 0
             self._asteroid_spawn(amount=4)
+            self.upgrades = [self._get_random_upgrade()]
             music.unpause()
 
     def _draw(self):
