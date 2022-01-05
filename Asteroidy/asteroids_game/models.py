@@ -48,7 +48,7 @@ class Spaceship(GameObject):
         self.shotgunRemaining = 0
         self.shielded = False
 
-        super().__init__(position, load_sprite("spaceship2"), Vector2(0))
+        super().__init__(position, load_sprite("spaceship"), Vector2(0))
 
     def rotate(self, clockwise=True):
         sign = 1 if clockwise else -1
@@ -95,6 +95,7 @@ class Spaceship(GameObject):
                 return True
         else:
             self.shielded = False
+            self.sprite = load_sprite("spaceship")
             self.spaceship_destroy_sound.play()
             return False
 
@@ -153,6 +154,7 @@ class Shield(GameObject):
 
     def destroy(self):
         self.ship.shielded = True
+        self.ship.sprite = load_sprite("spaceship_shielded")
         self.sound.play()
 
 
