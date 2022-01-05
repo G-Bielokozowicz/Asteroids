@@ -26,8 +26,7 @@ class Asteroidy:
         self.count = 1
         self.menu_mode = True
         self.game_over = False
-        # self.upgrades = [self._get_random_upgrade()]
-        self.upgrades = [Shield(get_random_position(self.screen), self.spaceship)]
+        self.upgrades = [self._get_random_upgrade()]
         self._asteroid_spawn(amount=4)
         music.load("assets/sounds/soundtrack.wav")
         music.set_volume(0.1)

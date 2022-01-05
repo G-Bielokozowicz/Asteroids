@@ -34,7 +34,7 @@ class Spaceship(GameObject):
     MANEUVERABILITY = 3  # turning speed
     ACCELERATION = 0.1  # acceleration speed
     MAX_SPEED = 8  # maximum speed
-    BULLET_SPEED = 4  # bullet speed
+    BULLET_SPEED = 5  # bullet speed
     STARTING_LIVES = 3  # starting ammount of lives
 
     def __init__(self, position: [int, int], create_bullet_callback: Callable):
