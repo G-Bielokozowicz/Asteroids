@@ -29,7 +29,7 @@ class Asteroidy:
         self.upgrades = [self._get_random_upgrade()]
         self._asteroid_spawn(amount=4)
         music.load("assets/sounds/soundtrack.wav")
-        music.set_volume(0.1)
+        music.set_volume(0.05)
         music.play(-1, fade_ms=1000)
 
     def _init_pygame(self):

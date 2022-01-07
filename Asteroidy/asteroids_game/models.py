@@ -133,6 +133,7 @@ class Asteroid(GameObject):
                 self.create_asteroid_callback(asteroid)
 
 
+
 class Bullet(GameObject):
     def __init__(self, position: Vector2, velocity: Vector2, rotation: int, sprite_rotation: float):
         sprite = rotozoom(load_sprite("bullet2"), sprite_rotation, 1)
