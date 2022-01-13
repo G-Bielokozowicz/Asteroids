@@ -1,14 +1,15 @@
 from typing import Callable, Any
 
+import pygame
 from pygame import Surface
 from pygame.math import Vector2
 from pygame.transform import rotozoom
-
 import random
 
-from utils import get_random_velocity, load_sprite, load_sound, wrap_position
+from utils import get_random_velocity, load_sprite, load_sound, wrap_position, image_at
 
 UP = Vector2(0, -1)  # wektor wskazujacy do gory
+
 
 
 class GameObject:
@@ -43,7 +44,8 @@ class Spaceship(GameObject):
         self.spaceship_hit_asteroid = load_sound("asteroid_hit")
         self.spaceship_destroy_sound = load_sound("spaceship_destroy")
         self.spaceship_hit_shielded = load_sound("shielded_hit")
-        self.default_sprite = load_sprite("spaceship")
+      # self.default_sprite = load_sprite("spaceship")
+        self.default_sprite = image_at(0,0,50,50)
         self.default_accelerating = load_sprite("spaceship_accelerating")
         self.shielded_sprite = load_sprite("spaceship_shielded")
         self.shielded_accelerating = load_sprite("spaceship_shielded_accelerating")
@@ -133,10 +135,9 @@ class Asteroid(GameObject):
                 self.create_asteroid_callback(asteroid)
 
 
-
 class Bullet(GameObject):
     def __init__(self, position: Vector2, velocity: Vector2, rotation: int, sprite_rotation: float):
-        sprite = rotozoom(load_sprite("bullet2"), sprite_rotation, 1)
+        sprite = rotozoom(load_sprite("bullet"), sprite_rotation, 1)
         super().__init__(position, sprite, velocity)
         # rotation of bullet when fired
         self.velocity.rotate_ip(rotation)

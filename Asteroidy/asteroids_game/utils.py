@@ -18,6 +18,14 @@ def load_sprite(name: str, with_alpha=True) -> Surface:
         return loaded_sprite.convert()
 
 
+def image_at(x: int, y: int, w: int, h: int) -> Surface:
+    sheet = load_sprite("spaceship_sheet_unshielded")
+    sprite = pygame.Surface((w,h),pygame.SRCALPHA,32)
+    sprite.set_colorkey((0,0,0))
+    sprite.blit(sheet,(0,0),(x,y,w,h))
+    return sprite
+
+
 def load_sound(name: str) -> Sound:
     path = f"assets/sounds/{name}.wav"
     return Sound(path)
