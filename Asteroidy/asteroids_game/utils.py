@@ -18,11 +18,15 @@ def load_sprite(name: str, with_alpha=True) -> Surface:
         return loaded_sprite.convert()
 
 
-def image_at(x: int, y: int, w: int, h: int) -> Surface:
-    sheet = load_sprite("spaceship_sheet_unshielded")
-    sprite = pygame.Surface((w,h),pygame.SRCALPHA,32)
-    sprite.set_colorkey((0,0,0))
-    sprite.blit(sheet,(0,0),(x,y,w,h))
+def image_at(which_image: int,isShielded: bool = False) -> Surface:
+    if isShielded is False:
+         sheet = load_sprite("spaceship_sheet_unshielded")
+    else:
+        sheet = load_sprite("spaceship_sheet_shielded")
+    image_number = which_image - 1  # sprites start at 0 in file, but I want to start counting them at 1, so I need to subtract 1
+    sprite = pygame.Surface((50, 50), pygame.SRCALPHA, 32)
+    sprite.set_colorkey((0, 0, 0))
+    sprite.blit(sheet, (0, 0), (image_number*50, 0, 50, 50))
     return sprite
 
 

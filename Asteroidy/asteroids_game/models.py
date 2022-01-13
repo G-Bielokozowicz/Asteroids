@@ -11,7 +11,6 @@ from utils import get_random_velocity, load_sprite, load_sound, wrap_position, i
 UP = Vector2(0, -1)  # wektor wskazujacy do gory
 
 
-
 class GameObject:
     def __init__(self, position: [int, int], sprite: Surface, velocity: Vector2):
         self.position = Vector2(position)
@@ -44,11 +43,11 @@ class Spaceship(GameObject):
         self.spaceship_hit_asteroid = load_sound("asteroid_hit")
         self.spaceship_destroy_sound = load_sound("spaceship_destroy")
         self.spaceship_hit_shielded = load_sound("shielded_hit")
-      # self.default_sprite = load_sprite("spaceship")
-        self.default_sprite = image_at(0,0,50,50)
-        self.default_accelerating = load_sprite("spaceship_accelerating")
-        self.shielded_sprite = load_sprite("spaceship_shielded")
-        self.shielded_accelerating = load_sprite("spaceship_shielded_accelerating")
+        self.unshielded_sprites = [image_at(5), image_at(3), image_at(1)]
+        self.unshielded_sprites_accelerating = [image_at(6), image_at(4), image_at(2)]
+        self.shielded_sprites = [image_at(5, True), image_at(3, True), image_at(1, True)]
+        self.shielded_sprites_accelerating = [image_at(6, True), image_at(4, True), image_at(2, True)]
+        self.default_sprite = self.unshielded_sprites[2]
         self.direction = Vector2(UP)
         self.lives = self.STARTING_LIVES
         self.shotgun = False
@@ -68,9 +67,9 @@ class Spaceship(GameObject):
         if self.velocity.length() > self.MAX_SPEED:
             self.velocity.scale_to_length(self.MAX_SPEED)
         if self.isShielded:
-            self.sprite = self.shielded_accelerating
+            self.sprite = self.shielded_sprites_accelerating[self.lives - 1]
         else:
-            self.sprite = self.default_accelerating
+            self.sprite = self.unshielded_sprites_accelerating[self.lives - 1]
 
     def shoot(self):
         bullet_position = self.position
@@ -166,5 +165,4 @@ class Shield(GameObject):
 
     def destroy(self):
         self.ship.isShielded = True
-        self.ship.sprite = self.ship.shielded_sprite
         self.sound.play()

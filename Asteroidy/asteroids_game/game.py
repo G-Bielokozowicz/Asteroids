@@ -65,6 +65,7 @@ class Asteroidy:
         }
         return upgrade_list[random.randint(1, 2)]
 
+
     def _process_game_logic(self):
         for game_object in self._get_game_objects():
             game_object.move(self.screen)
@@ -179,25 +180,20 @@ class Asteroidy:
                 self.spaceship.accelerate()
             else:
                 if self.spaceship.isShielded:
-                    self.spaceship.sprite = self.spaceship.shielded_sprite
+                    self.spaceship.sprite = self.spaceship.shielded_sprites[self.spaceship.lives - 1]
                 else:
-                    self.spaceship.sprite = self.spaceship.default_sprite
+                    self.spaceship.sprite = self.spaceship.unshielded_sprites[self.spaceship.lives - 1]
 
     def _draw(self):
 
         self.screen.blit(self.background, (0, 0))
 
         print_text(self.screen, "Score = " + str(self.score), 10, 10, 48, False, (255, 255, 255))
-
         if self.spaceship:
-            temp = "Lives = " + str(self.spaceship.lives)
             temp2 = "Shotgun = " + str(self.spaceship.shotgunRemaining)
         else:
-            temp = "Lives = 0"
             temp2 = "Shotgun = 0 "
-
-        print_text(self.screen, temp, 10, 50, 48, False, (255, 255, 255))
-        print_text(self.screen, temp2, 10, 100, 48, False, (255, 255, 255))
+        print_text(self.screen, temp2, 10, 50, 48, False, (255, 255, 255))
 
         for game_object in self._get_game_objects():
             game_object.draw(self.screen)
