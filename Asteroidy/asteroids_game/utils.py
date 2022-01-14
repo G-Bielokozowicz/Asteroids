@@ -41,14 +41,14 @@ def wrap_position(position: Vector2, surface: Surface) -> Vector2:
     return Vector2(x % w, y % h)
 
 
-def get_random_position(surface: Surface):
+def get_random_position(surface: Surface)->Vector2:
     return Vector2(
         random.randrange(surface.get_width()),
         random.randrange(surface.get_height())
     )
 
 
-def get_random_velocity(min_speed: int, max_speed: int):
+def get_random_velocity(min_speed: int, max_speed: int)->Vector2:
     speed = random.randint(min_speed, max_speed)
     angle = random.randrange(0, 360)
     return Vector2(speed, 0).rotate(angle)

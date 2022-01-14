@@ -17,8 +17,6 @@ class Asteroidy:
         self.screen = pygame.display.set_mode((1600, 900))
         self.background = load_sprite("space", False)
         self.startbg = load_sprite("start", False)
-        self.message = ""
-        self.message_color = Color("red")
         self.asteroids = []
         self.bullets = []
         self.score = 0
@@ -64,7 +62,6 @@ class Asteroidy:
             2: Shotgun(get_random_position(self.screen), self.spaceship)
         }
         return upgrade_list[random.randint(1, 2)]
-
 
     def _process_game_logic(self):
         for game_object in self._get_game_objects():
@@ -123,14 +120,13 @@ class Asteroidy:
                 self.bullets.remove(bullet)
 
     def _game_loss(self):
-        # self.game_over = True
+        self.game_over = True
         music.pause()
         self._game_over_loop()
 
     def _game_over_loop(self):
         while True:
-            self.message = "You lost! Press Enter to restart!"
-            print_text(self.screen, self.message, 10, 50, 48, True, (255, 255, 255))
+
             self._draw()
             for event in pygame.event.get():
                 # exiting the game
@@ -144,8 +140,8 @@ class Asteroidy:
     def _restart(self):
         # if self.game_over:
         self.spaceship = Spaceship((800, 450), self.bullets.append)
-        # self.game_over = False
-        self.message = ""
+        self.game_over = False
+
         self.asteroids.clear()
         self.bullets.clear()
         self.upgrades.clear()
@@ -185,21 +181,20 @@ class Asteroidy:
                     self.spaceship.sprite = self.spaceship.unshielded_sprites[self.spaceship.lives - 1]
 
     def _draw(self):
-
         self.screen.blit(self.background, (0, 0))
-
         print_text(self.screen, "Score = " + str(self.score), 10, 10, 48, False, (255, 255, 255))
         if self.spaceship:
-            temp2 = "Shotgun = " + str(self.spaceship.shotgunRemaining)
+            temp = "Shotgun = " + str(self.spaceship.shotgunRemaining)
         else:
-            temp2 = "Shotgun = 0 "
-        print_text(self.screen, temp2, 10, 50, 48, False, (255, 255, 255))
+            temp = "Shotgun = 0 "
+        print_text(self.screen, temp, 10, 50, 48, False, (255, 255, 255))
+
+        if self.game_over:
+            temp2 = "You lost! Press Enter to restart"
+            print_text(self.screen, temp2, 490, 400, 60, False)
 
         for game_object in self._get_game_objects():
             game_object.draw(self.screen)
-
-        if self.message:
-            print_text(self.screen, self.message, 50, 50, 64, True, self.message_color)
 
         pygame.display.flip()
         self.clock.tick(60)
