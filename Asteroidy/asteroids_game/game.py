@@ -20,6 +20,7 @@ class Asteroidy:
         self.asteroids = []
         self.bullets = []
         self.score = 0
+        self.highscore = 0
         self.spaceship = Spaceship((800, 450), self.bullets.append)
         self.count = 1
         self.menu_mode = True
@@ -121,6 +122,7 @@ class Asteroidy:
 
     def _game_loss(self):
         self.game_over = True
+        self._record_high_score()
         music.pause()
         self._game_over_loop()
 
@@ -189,13 +191,16 @@ class Asteroidy:
             temp = "Shotgun = 0 "
         print_text(self.screen, temp, 10, 50, 48, False, (255, 255, 255))
 
-        if self.game_over:
-            temp2 = "You lost! Press Enter to restart"
-            print_text(self.screen, temp2, 490, 400, 60, False)
-
         for game_object in self._get_game_objects():
             game_object.draw(self.screen)
 
+        if self.game_over:
+            temp2 = "You lost! Press Enter to restart"
+            print_text(self.screen, temp2, 480, 350, 60, False)
+            temp3 = "Your current score: " + str(self.score)
+            print_text(self.screen, temp3, 580, 410, 60)
+            temp4 = "Your highscore: " + str(self.highscore)
+            print_text(self.screen, temp4, 600, 470, 60)
         pygame.display.flip()
         self.clock.tick(60)
 
@@ -206,6 +211,15 @@ class Asteroidy:
         return game_objects
 
         # game
+
+    def _record_high_score(self):
+        f = open("assets/highscore.txt", "r")
+        self.highscore = int(f.read())
+        f.close()
+        if self.score >= self.highscore:
+            f = open("assets/highscore.txt", "w")
+            f.write(str(self.score))
+            f.close()
 
     def main_loop(self):
         while True:
