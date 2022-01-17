@@ -76,7 +76,7 @@ class Asteroidy:
         if len(self.asteroids) == 0:
             self._asteroid_spawn(2)
         if len(self.upgrades) == 0:
-            if self.count % 4000 == 0:
+            if self.count % 3000 == 0:
                 self.upgrades.append(self._get_random_upgrade())
 
         # destroying spaceship when it hits asteroids
