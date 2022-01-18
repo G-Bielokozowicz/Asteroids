@@ -54,7 +54,7 @@ def get_random_velocity(min_speed: int, max_speed: int)->Vector2:
     return Vector2(speed, 0).rotate(angle)
 
 
-def print_text(surface: Surface, text: str, locx: int, locy: int, size: int, center=False, color=Color("tomato")):
+def print_text(surface: Surface, text: str, locx: int, locy: int, size: int, center=False, color=Color("red")):
     font = pygame.font.SysFont('None', size)
     text_surface = font.render(text, True, color)
     rect = text_surface.get_rect()
