@@ -33,14 +33,16 @@ class Asteroidy:
         music.play(-1, fade_ms=1000)
 
         self.button_options = pygame.Surface((200, 50), pygame.SRCALPHA, 32).convert_alpha()
+        self.button_options_x, self.button_options_y = (680, 380)
         self.button_options_bg = load_sprite('button_options', False)
         self.button_options.blit(self.button_options_bg, (0, 0))
-        self.button_options_rect = pygame.Rect(700, 300, 200, 50)
+        self.button_options_rect = pygame.Rect(self.button_options_x, self.button_options_y, 200, 50)
 
         self.button_back = pygame.Surface((200, 50), pygame.SRCALPHA, 32).convert_alpha()
+        self.button_back_x,self.button_back_y = (680,600)
         self.button_back_bg = load_sprite('button_back', False)
         self.button_back.blit(self.button_back_bg, (0, 0))
-        self.button_back_rect = pygame.Rect(700, 600, 200, 50)
+        self.button_back_rect = pygame.Rect(self.button_back_x, self.button_back_y, 200, 50)
 
     def _init_pygame(self):
         pygame.init()
@@ -67,7 +69,7 @@ class Asteroidy:
             # self.screen.blit(self.startbg, (0, 0))
             self.screen.blit(self.background, (0, 0))
             pygame.draw.rect(self.screen, (0, 0, 0), self.button_options_rect)
-            self.screen.blit(self.button_options, (700, 300))
+            self.screen.blit(self.button_options, (self.button_options_x, self.button_options_y))
             pygame.display.flip()
             self._handle_input()
 
@@ -76,8 +78,7 @@ class Asteroidy:
             # self.screen.blit(self.startbg, (0, 0))
             self.screen.blit(self.background, (0, 0))
             pygame.draw.rect(self.screen, (0, 0, 0), self.button_back_rect)
-            self.screen.blit(self.button_back, (700, 600))
-            #print_text(self.screen, "Options", 800, 400, 50, True)
+            self.screen.blit(self.button_back, (self.button_back_x, self.button_back_y))
             pygame.display.flip()
             self._handle_input()
 
