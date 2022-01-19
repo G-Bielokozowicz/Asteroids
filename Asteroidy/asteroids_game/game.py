@@ -2,7 +2,7 @@ import pygame
 from pygame import Color
 from pygame.mixer import music
 from utils import load_sprite, get_random_position, print_text
-
+from button import Button
 from models import Spaceship, Asteroid, Shotgun, Shield
 
 import random
@@ -44,12 +44,13 @@ class Asteroidy:
         self.button_back.blit(self.button_back_bg, (0, 0))
         self.button_back_rect = pygame.Rect(self.button_back_x, self.button_back_y, 200, 50)
 
-        self.button_start = pygame.Surface((200, 50), pygame.SRCALPHA, 32).convert_alpha()
-        self.button_start_x, self.button_start_y = (700, 300)
-        self.button_start_bg = load_sprite('button_start', False)
-        self.button_start.blit(self.button_start_bg, (0, 0))
-        self.button_start_rect = pygame.Rect(self.button_start_x, self.button_start_y, 200, 50)
+        # self.button_start = pygame.Surface((200, 50), pygame.SRCALPHA, 32).convert_alpha()
+        # self.button_start_x, self.button_start_y = (700, 300)
+        # self.button_start_bg = load_sprite('button_start', False)
+        # self.button_start.blit(self.button_start_bg, (0, 0))
+        # self.button_start_rect = pygame.Rect(self.button_start_x, self.button_start_y, 200, 50)
 
+        self.button_start = Button(700,300,"button_start")
     def _init_pygame(self):
         pygame.init()
         pygame.display.set_caption("Asteroidy")
@@ -78,9 +79,9 @@ class Asteroidy:
             pygame.draw.rect(self.screen, (0, 0, 0), self.button_options_rect)
             self.screen.blit(self.button_options, (self.button_options_x, self.button_options_y))
 
-            pygame.draw.rect(self.screen, (0, 0, 0), self.button_start_rect)
-            self.screen.blit(self.button_start, (self.button_start_x, self.button_start_y))
-
+          #  pygame.draw.rect(self.screen, (0, 0, 0), self.button_start_rect)
+           # self.screen.blit(self.button_start, (self.button_start_x, self.button_start_y))
+            self.button_start.draw(self.screen)
             pygame.display.flip()
             self._handle_input()
 
@@ -192,9 +193,9 @@ class Asteroidy:
                         self.menu_mode = False
                         self.options_mode = True
                         self._options()
-                    if self.button_start_rect.collidepoint((pygame.mouse.get_pos())):
-                        self.menu_mode = False
-                        self.main_loop()
+                  #  if self.button_start_rect.collidepoint((pygame.mouse.get_pos())):
+                   #     self.menu_mode = False
+                   #     self.main_loop()
                 # starting the game
                 if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
                     self.menu_mode = False
