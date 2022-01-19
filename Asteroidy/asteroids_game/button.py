@@ -15,3 +15,6 @@ class Button:
     def draw(self, surface: Surface):
         pygame.draw.rect(surface, (0, 0, 0), self.rect)
         surface.blit(self.surf, (self.position_x, self.position_y))
+
+    def is_pressed(self):
+        return self.rect.collidepoint((pygame.mouse.get_pos()))
