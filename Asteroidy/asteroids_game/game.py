@@ -190,11 +190,11 @@ class Asteroidy:
 
         if self.game_over:
             temp2 = "You lost! Press Enter to restart"
-            print_text(self.screen, temp2, 480, 350, 60, False)
+            print_text(self.screen, temp2, 340, 350, 60, False)
             temp3 = "Your current score: " + str(self.score)
-            print_text(self.screen, temp3, 580, 410, 60)
+            print_text(self.screen, temp3, 500, 410, 60)
             temp4 = "Your highscore: " + str(self.highscore)
-            print_text(self.screen, temp4, 600, 470, 60)
+            print_text(self.screen, temp4, 560, 470, 60)
         pygame.display.flip()
         self.clock.tick(60)
 

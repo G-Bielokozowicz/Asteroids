@@ -55,7 +55,7 @@ def get_random_velocity(min_speed: int, max_speed: int)->Vector2:
 
 
 def print_text(surface: Surface, text: str, locx: int, locy: int, size: int, center=False, color=Color("red")):
-    font = pygame.font.SysFont('None', size)
+    font = pygame.font.Font('assets/Future Light.ttf', size)
     text_surface = font.render(text, True, color)
     rect = text_surface.get_rect()
     rect.center = Vector2(surface.get_size()) / 2
