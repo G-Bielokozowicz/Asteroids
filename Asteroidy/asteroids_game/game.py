@@ -26,10 +26,12 @@ class Asteroidy:
         self.menu_mode = True
         self.game_over = False
         self.upgrades = [self._get_random_upgrade()]
-        self._asteroid_spawn(amount=4)
+        self._asteroid_spawn(amount=5)
         music.load("assets/sounds/soundtrack.wav")
         music.set_volume(0.05)
         music.play(-1, fade_ms=1000)
+        self.mx, self.my = pygame.mouse.get_pos()
+        self.click = False
 
     def _init_pygame(self):
         pygame.init()
@@ -39,14 +41,11 @@ class Asteroidy:
     def menu(self):
         while self.menu_mode:
             self.screen.blit(self.startbg, (0, 0))
+            #button_1 = pygame.Rect(50, 100, 200, 50)
+            # self.screen.blit(self.background, (0, 0))
+           # pygame.draw.rect(self.screen, (255, 0, 0), button_1)
             pygame.display.flip()
-            for event in pygame.event.get():
-                # exiting the game
-                if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
-                    quit()
-                if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
-                    self.menu_mode = False
-                    self.main_loop()
+            self._handle_input()
 
     # spawning asteroids
     def _asteroid_spawn(self, amount: int):
@@ -128,7 +127,6 @@ class Asteroidy:
 
     def _game_over_loop(self):
         while True:
-
             self._draw()
             for event in pygame.event.get():
                 # exiting the game
@@ -153,23 +151,21 @@ class Asteroidy:
         music.unpause()
 
     def _handle_input(self):
+        click = False
         for event in pygame.event.get():
-            # exiting the game
-            # if self.game_over:
-            #     if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
-            #         self._restart()
             if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
                 quit()
-
-                # shooting
-                # elif self.game_over is False and self.spaceship and event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
-                self.spaceship.shoot()
+            if self.menu_mode:
+                if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                    print("test")
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
+                    self.menu_mode = False
+                    self.main_loop()
             elif self.spaceship and event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
                 self.spaceship.shoot()
-
         # moving the spaceship
         is_key_pressed = pygame.key.get_pressed()
-        if self.spaceship:
+        if self.spaceship and not self.menu_mode:
             if is_key_pressed[pygame.K_RIGHT]:
                 self.spaceship.rotate(clockwise=True)
             elif is_key_pressed[pygame.K_LEFT]:
