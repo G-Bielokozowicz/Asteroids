@@ -30,9 +30,7 @@ class Asteroidy:
         music.load("assets/sounds/soundtrack.wav")
         music.set_volume(0.05)
         music.play(-1, fade_ms=1000)
-        self.mx, self.my = pygame.mouse.get_pos()
-        self.click = False
-
+        self.button_1 = pygame.Rect(50, 100, 200, 50)
     def _init_pygame(self):
         pygame.init()
         pygame.display.set_caption("Asteroidy")
@@ -41,9 +39,8 @@ class Asteroidy:
     def menu(self):
         while self.menu_mode:
             self.screen.blit(self.startbg, (0, 0))
-            #button_1 = pygame.Rect(50, 100, 200, 50)
-            # self.screen.blit(self.background, (0, 0))
-           # pygame.draw.rect(self.screen, (255, 0, 0), button_1)
+            self.screen.blit(self.background, (0, 0))
+            #pygame.draw.rect(self.screen, (255, 0, 0), self.button_1)
             pygame.display.flip()
             self._handle_input()
 
@@ -151,13 +148,14 @@ class Asteroidy:
         music.unpause()
 
     def _handle_input(self):
-        click = False
         for event in pygame.event.get():
             if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
                 quit()
             if self.menu_mode:
                 if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                    print("test")
+                    if self.button_1.collidepoint(pygame.mouse.get_pos()):
+                        #print("Handle input")
+                        pass
                 if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
                     self.menu_mode = False
                     self.main_loop()
