@@ -24,27 +24,23 @@ class Asteroidy:
         self.spaceship = Spaceship((800, 450), self.bullets.append)
         self.count = 1
         self.menu_mode = True
+        self.options_mode = False
         self.game_over = False
         self.upgrades = [self._get_random_upgrade()]
         self._asteroid_spawn(amount=5)
         music.load("assets/sounds/soundtrack.wav")
         music.set_volume(0.05)
         music.play(-1, fade_ms=1000)
-        self.button_1 = pygame.Rect(50, 100, 200, 50)
+
+        self.button_options = pygame.Surface((200, 50), pygame.SRCALPHA, 32).convert_alpha()
+        self.button_options_bg = load_sprite('button_options', False)
+        self.button_options.blit(self.button_options_bg, (0, 0))
+        self.button_options_rect = pygame.Rect(700, 300, 200, 50)
+
     def _init_pygame(self):
         pygame.init()
         pygame.display.set_caption("Asteroidy")
 
-    # main menu
-    def menu(self):
-        while self.menu_mode:
-            self.screen.blit(self.startbg, (0, 0))
-            self.screen.blit(self.background, (0, 0))
-            #pygame.draw.rect(self.screen, (255, 0, 0), self.button_1)
-            pygame.display.flip()
-            self._handle_input()
-
-    # spawning asteroids
     def _asteroid_spawn(self, amount: int):
         for _ in range(amount):
             while True:
@@ -59,6 +55,24 @@ class Asteroidy:
             2: Shotgun(get_random_position(self.screen), self.spaceship)
         }
         return upgrade_list[random.randint(1, 2)]
+
+    # main menu
+    def menu(self):
+        while self.menu_mode:
+            # self.screen.blit(self.startbg, (0, 0))
+            self.screen.blit(self.background, (0, 0))
+            pygame.draw.rect(self.screen, (0, 0, 0), self.button_options_rect)
+            self.screen.blit(self.button_options, (700, 300))
+            pygame.display.flip()
+            self._handle_input()
+
+    def options(self):
+        while self.options_mode:
+            # self.screen.blit(self.startbg, (0, 0))
+            self.screen.blit(self.background, (0, 0))
+            print_text(self.screen, "Options", 800, 400, 50, True)
+            pygame.display.flip()
+            self._handle_input()
 
     def _process_game_logic(self):
         for game_object in self._get_game_objects():
@@ -151,11 +165,15 @@ class Asteroidy:
         for event in pygame.event.get():
             if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
                 quit()
+            # main menu
             if self.menu_mode:
                 if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                    if self.button_1.collidepoint(pygame.mouse.get_pos()):
-                        #print("Handle input")
-                        pass
+                    # going to options menu
+                    if self.button_options_rect.collidepoint((pygame.mouse.get_pos())):
+                        self.menu_mode = False
+                        self.options_mode = True
+                        self.options()
+                # starting the game
                 if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
                     self.menu_mode = False
                     self.main_loop()
