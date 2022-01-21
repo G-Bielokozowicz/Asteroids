@@ -1,5 +1,4 @@
 import pygame
-from pygame import Color
 from pygame.mixer import music
 from utils import load_sprite, get_random_position, print_text
 from button import Button
@@ -32,10 +31,11 @@ class Asteroidy:
         music.set_volume(0.05)
         music.play(-1, fade_ms=1000)
 
-
         self.button_start = Button(700, 300, "button_start")
-        self.button_options=Button(700,380,"button_options")
-        self.button_back=Button(700,600,"button_back")
+        self.button_options = Button(700, 380, "button_options")
+        self.button_back = Button(700, 600, "button_back")
+        self.button_music = Button(700, 300, "button_music_on")
+        self.button_sound = Button(700, 380, "button_sound_on")
 
     def _init_pygame(self):
         pygame.init()
@@ -66,11 +66,14 @@ class Asteroidy:
             pygame.display.flip()
             self._handle_input()
 
+    # options menu
     def _options(self):
         while self.options_mode:
             # self.screen.blit(self.startbg, (0, 0))
             self.screen.blit(self.background, (0, 0))
             self.button_back.draw(self.screen)
+            self.button_music.draw(self.screen)
+            self.button_sound.draw(self.screen)
             pygame.display.flip()
             self._handle_input()
 
@@ -180,14 +183,17 @@ class Asteroidy:
                 if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
                     self.menu_mode = False
                     self.main_loop()
+            # options
             elif self.options_mode:
                 if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                    # going back to main menu
 
+
+                    # going back to main menu
                     if self.button_back.is_pressed():
                         self.menu_mode = True
                         self.options_mode = False
                         self.menu()
+            #game
             elif self.spaceship and event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
                 self.spaceship.shoot()
         # moving the spaceship
