@@ -1,11 +1,9 @@
 from typing import Callable, Any
 
-import pygame
 from pygame import Surface
 from pygame.math import Vector2
 from pygame.transform import rotozoom
 import random
-
 from utils import get_random_velocity, load_sprite, load_sound, wrap_position, image_at
 
 UP = Vector2(0, -1)  # wektor wskazujacy do gory
@@ -17,6 +15,7 @@ class GameObject:
         self.sprite = sprite
         self.radius = sprite.get_width() / 2
         self.velocity = Vector2(velocity)
+        self.is_sound_turned_on = True
 
     def draw(self, surface: Surface):
         blit_position = self.position - Vector2(self.radius)
@@ -84,7 +83,8 @@ class Spaceship(GameObject):
             self.shotgunRemaining -= 1
             if self.shotgunRemaining <= 0:
                 self.shotgun = False
-        self.laser_sound.play()
+        if self.is_sound_turned_on:
+            self.laser_sound.play()
 
     def draw(self, surface: Surface):
         angle = self.direction.angle_to(UP)
@@ -97,25 +97,29 @@ class Spaceship(GameObject):
         if not self.isShielded:
             if self.lives > 1:
                 self.lives -= 1
-                self.spaceship_hit_asteroid.play()
+                if self.is_sound_turned_on:
+                    self.spaceship_hit_asteroid.play()
                 return False
             elif self.lives == 1:
                 self.lives -= -1
                 game.spaceship = None
-                self.spaceship_destroy_sound.play()
+                if self.is_sound_turned_on:
+                    self.spaceship_destroy_sound.play()
                 return True
         else:
             self.isShielded = False
             self.sprite = self.default_sprite
-            self.spaceship_hit_shielded.play()
+            if self.is_sound_turned_on:
+                self.spaceship_hit_shielded.play()
             return False
 
 
 class Asteroid(GameObject):
-    def __init__(self, position: Vector2, create_asteroid_callback: callable, size: int = 3):
+    def __init__(self, position: Vector2, create_asteroid_callback: callable,size: int = 3):
         self.create_asteroid_callback = create_asteroid_callback
         self.size = size
         self.asteroid_destroy_sound = load_sound("asteroid_destroy")
+
         size_to_scale = {
             3: 1,
             2: 0.6,
@@ -127,11 +131,13 @@ class Asteroid(GameObject):
         super().__init__(position, sprite, get_random_velocity(1, 3))
 
     def split(self):
-        self.asteroid_destroy_sound.play()
         if self.size > 1:
             for _ in range(2):
-                asteroid = Asteroid(self.position, self.create_asteroid_callback, self.size - 1)
+                asteroid = Asteroid(self.position, self.create_asteroid_callback,self.size - 1)
+                asteroid.is_sound_turned_on=self.is_sound_turned_on
                 self.create_asteroid_callback(asteroid)
+        if self.is_sound_turned_on:
+            self.asteroid_destroy_sound.play()
 
 
 class Bullet(GameObject):
@@ -154,7 +160,8 @@ class Shotgun(GameObject):
     def destroy(self):
         self.ship.shotgun = True
         self.ship.shotgunRemaining += 10
-        self.sound.play()
+        if self.is_sound_turned_on:
+            self.sound.play()
 
 
 class Shield(GameObject):
@@ -165,4 +172,5 @@ class Shield(GameObject):
 
     def destroy(self):
         self.ship.isShielded = True
-        self.sound.play()
+        if self.is_sound_turned_on:
+            self.sound.play()

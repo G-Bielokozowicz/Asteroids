@@ -26,13 +26,14 @@ class Asteroidy:
         self.options_mode = False
         self.game_over = False
         self.upgrades = [self._get_random_upgrade()]
-        self._asteroid_spawn(amount=5)
 
         self.music_volume = 0.05
         music.load("assets/sounds/soundtrack.wav")
         music.set_volume(self.music_volume)
         music.play(-1, fade_ms=1000)
         self.is_music_turned_on = True
+        self.is_sound_turned_on = True
+        self._asteroid_spawn(amount=5)
 
         self.button_start = Button(self.screen, 700, 300, "button_start")
         self.button_options = Button(self.screen, 700, 380, "button_options")
@@ -51,7 +52,9 @@ class Asteroidy:
                 position = get_random_position(self.screen)
                 if position.distance_to(self.spaceship.position) > self.MIN_ASTEROID_DISTANCE:
                     break
-            self.asteroids.append(Asteroid(position, self.asteroids.append))
+            ast = Asteroid(position, self.asteroids.append)
+            ast.is_sound_turned_on = self.is_sound_turned_on
+            self.asteroids.append(ast)
 
     def _get_random_upgrade(self):
         upgrade_list = {
@@ -144,6 +147,11 @@ class Asteroidy:
         music.pause()
         self._game_over_loop()
 
+    def _turn_off_sound(self):
+        self.is_sound_turned_on = not self.is_sound_turned_on
+        for obj in self._get_game_objects():
+            obj.is_sound_turned_on = not obj.is_sound_turned_on
+
     def _game_over_loop(self):
         while True:
             self._draw()
@@ -160,19 +168,20 @@ class Asteroidy:
         # if self.game_over:
         self.spaceship = Spaceship((800, 450), self.bullets.append)
         self.game_over = False
-
         self.asteroids.clear()
         self.bullets.clear()
         self.upgrades.clear()
         self.score = 0
-        self._asteroid_spawn(amount=4)
+        self._asteroid_spawn(amount=5)
         self.upgrades = [self._get_random_upgrade()]
         music.unpause()
 
     def _handle_input(self):
         for event in pygame.event.get():
+            # quitting with escape
             if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
                 quit()
+
             # main menu
             if self.menu_mode:
                 if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
@@ -190,9 +199,12 @@ class Asteroidy:
                 if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
                     self.menu_mode = False
                     self.main_loop()
+
             # options
             elif self.options_mode:
                 if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+
+                    # turning music on and off
                     if self.button_music.is_pressed():
                         if self.is_music_turned_on:
                             music.set_volume(0)
@@ -202,6 +214,9 @@ class Asteroidy:
                             self.is_music_turned_on = True
                         self.button_music.change_image()
 
+                    if self.button_sound.is_pressed():
+                        self._turn_off_sound()
+                        self.button_sound.change_image()
                     # going back to main menu
                     if self.button_back.is_pressed():
                         self.menu_mode = True
