@@ -39,6 +39,7 @@ class Asteroidy:
         self.button_back = Button(700, 600, "button_back")
         self.button_music = Button(700, 300, "button_music_on")
         self.button_sound = Button(700, 380, "button_sound_on")
+        self.button_exit = Button(700, 600, "button_exit")
 
     def _init_pygame(self):
         pygame.init()
@@ -66,6 +67,7 @@ class Asteroidy:
             self.screen.blit(self.background, (0, 0))
             self.button_options.draw(self.screen)
             self.button_start.draw(self.screen)
+            self.button_exit.draw(self.screen)
             pygame.display.flip()
             self._handle_input()
 
@@ -182,6 +184,8 @@ class Asteroidy:
                     if self.button_start.is_pressed():
                         self.menu_mode = False
                         self.main_loop()
+                    if self.button_exit.is_pressed():
+                        quit()
                 # starting the game
                 if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
                     self.menu_mode = False
