@@ -27,9 +27,12 @@ class Asteroidy:
         self.game_over = False
         self.upgrades = [self._get_random_upgrade()]
         self._asteroid_spawn(amount=5)
+
+        self.musicVolume = 0.05
         music.load("assets/sounds/soundtrack.wav")
-        music.set_volume(0.05)
+        music.set_volume(self.musicVolume)
         music.play(-1, fade_ms=1000)
+        self.isMusicTurnedOn = True
 
         self.button_start = Button(700, 300, "button_start")
         self.button_options = Button(700, 380, "button_options")
@@ -186,14 +189,20 @@ class Asteroidy:
             # options
             elif self.options_mode:
                 if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-
+                    if self.button_music.is_pressed():
+                        if self.isMusicTurnedOn:
+                            music.set_volume(0)
+                            self.isMusicTurnedOn = False
+                        else:
+                            music.set_volume(self.musicVolume)
+                            self.isMusicTurnedOn = True
 
                     # going back to main menu
                     if self.button_back.is_pressed():
                         self.menu_mode = True
                         self.options_mode = False
                         self.menu()
-            #game
+            # game
             elif self.spaceship and event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
                 self.spaceship.shoot()
         # moving the spaceship
