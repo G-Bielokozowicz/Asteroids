@@ -28,18 +28,18 @@ class Asteroidy:
         self.upgrades = [self._get_random_upgrade()]
         self._asteroid_spawn(amount=5)
 
-        self.musicVolume = 0.05
+        self.music_volume = 0.05
         music.load("assets/sounds/soundtrack.wav")
-        music.set_volume(self.musicVolume)
+        music.set_volume(self.music_volume)
         music.play(-1, fade_ms=1000)
-        self.isMusicTurnedOn = True
+        self.is_music_turned_on = True
 
-        self.button_start = Button(700, 300, "button_start")
-        self.button_options = Button(700, 380, "button_options")
-        self.button_back = Button(700, 600, "button_back")
-        self.button_music = Button(700, 300, "button_music_on")
-        self.button_sound = Button(700, 380, "button_sound_on")
-        self.button_exit = Button(700, 600, "button_exit")
+        self.button_start = Button(self.screen, 700, 300, "button_start")
+        self.button_options = Button(self.screen, 700, 380, "button_options")
+        self.button_back = Button(self.screen, 700, 600, "button_back")
+        self.button_music = Button(self.screen, 700, 300, "button_music_on")
+        self.button_sound = Button(self.screen, 700, 380, "button_sound_on")
+        self.button_exit = Button(self.screen,700, 600, "button_exit")
 
     def _init_pygame(self):
         pygame.init()
@@ -65,9 +65,9 @@ class Asteroidy:
         while self.menu_mode:
             # self.screen.blit(self.startbg, (0, 0))
             self.screen.blit(self.background, (0, 0))
-            self.button_options.draw(self.screen)
-            self.button_start.draw(self.screen)
-            self.button_exit.draw(self.screen)
+            self.button_options.draw()
+            self.button_start.draw()
+            self.button_exit.draw()
             pygame.display.flip()
             self._handle_input()
 
@@ -76,9 +76,9 @@ class Asteroidy:
         while self.options_mode:
             # self.screen.blit(self.startbg, (0, 0))
             self.screen.blit(self.background, (0, 0))
-            self.button_back.draw(self.screen)
-            self.button_music.draw(self.screen)
-            self.button_sound.draw(self.screen)
+            self.button_back.draw()
+            self.button_music.draw()
+            self.button_sound.draw()
             pygame.display.flip()
             self._handle_input()
 
@@ -194,12 +194,12 @@ class Asteroidy:
             elif self.options_mode:
                 if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                     if self.button_music.is_pressed():
-                        if self.isMusicTurnedOn:
+                        if self.is_music_turned_on:
                             music.set_volume(0)
-                            self.isMusicTurnedOn = False
+                            self.is_music_turned_on = False
                         else:
-                            music.set_volume(self.musicVolume)
-                            self.isMusicTurnedOn = True
+                            music.set_volume(self.music_volume)
+                            self.is_music_turned_on = True
 
                     # going back to main menu
                     if self.button_back.is_pressed():
