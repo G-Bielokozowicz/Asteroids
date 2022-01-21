@@ -15,7 +15,7 @@ class Asteroidy:
         self.clock = pygame.time.Clock()
         self.screen = pygame.display.set_mode((1600, 900))
         self.background = load_sprite("space", False)
-        self.startbg = load_sprite("start", False)
+        self.startbg = load_sprite("tutorial", False)
         self.asteroids = []
         self.bullets = []
         self.score = 0
@@ -25,6 +25,7 @@ class Asteroidy:
         self.menu_mode = True
         self.options_mode = False
         self.game_over = False
+        self.tutorial_mode = False
         self.upgrades = [self._get_random_upgrade()]
 
         self.music_volume = 0.05
@@ -41,6 +42,8 @@ class Asteroidy:
         self.button_music = Button(self.screen, 700, 300, "button_music_on", "button_music_off")
         self.button_sound = Button(self.screen, 700, 380, "button_sound_on", "button_sound_off")
         self.button_exit = Button(self.screen, 700, 600, "button_exit")
+        self.button_tutorial = Button(self.screen, 700, 460, "button_tutorial")
+        self.button_tutorial_back = Button(self.screen, 1150, 700, "button_back")
 
     def _init_pygame(self):
         pygame.init()
@@ -71,6 +74,7 @@ class Asteroidy:
             self.button_options.draw()
             self.button_start.draw()
             self.button_exit.draw()
+            self.button_tutorial.draw()
             pygame.display.flip()
             self._handle_input()
 
@@ -82,6 +86,13 @@ class Asteroidy:
             self.button_back.draw()
             self.button_music.draw()
             self.button_sound.draw()
+            pygame.display.flip()
+            self._handle_input()
+
+    def _tutorial(self):
+        while self.tutorial_mode:
+            self.screen.blit(self.startbg, (0, 0))
+            self.button_tutorial_back.draw()
             pygame.display.flip()
             self._handle_input()
 
@@ -193,6 +204,10 @@ class Asteroidy:
                     if self.button_start.is_pressed():
                         self.menu_mode = False
                         self.main_loop()
+                    if self.button_tutorial.is_pressed():
+                        self.menu_mode = False
+                        self.tutorial_mode = True
+                        self._tutorial()
                     if self.button_exit.is_pressed():
                         quit()
                 # starting the game
@@ -203,7 +218,6 @@ class Asteroidy:
             # options
             elif self.options_mode:
                 if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-
                     # turning music on and off
                     if self.button_music.is_pressed():
                         if self.is_music_turned_on:
@@ -221,6 +235,12 @@ class Asteroidy:
                     if self.button_back.is_pressed():
                         self.menu_mode = True
                         self.options_mode = False
+                        self.menu()
+            elif self.tutorial_mode:
+                if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                    if self.button_tutorial_back.is_pressed():
+                        self.menu_mode=True
+                        self.tutorial_mode=False
                         self.menu()
             # game
             elif self.spaceship and event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
