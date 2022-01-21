@@ -30,3 +30,4 @@ class Button:
         else:
             self.surf.blit(self.image, (0, 0))
             self.image_number = 1
+        self.draw()

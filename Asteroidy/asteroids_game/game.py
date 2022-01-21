@@ -37,9 +37,9 @@ class Asteroidy:
         self.button_start = Button(self.screen, 700, 300, "button_start")
         self.button_options = Button(self.screen, 700, 380, "button_options")
         self.button_back = Button(self.screen, 700, 600, "button_back")
-        self.button_music = Button(self.screen, 700, 300, "button_music_on")
-        self.button_sound = Button(self.screen, 700, 380, "button_sound_on")
-        self.button_exit = Button(self.screen,700, 600, "button_exit")
+        self.button_music = Button(self.screen, 700, 300, "button_music_on", "button_music_off")
+        self.button_sound = Button(self.screen, 700, 380, "button_sound_on", "button_sound_off")
+        self.button_exit = Button(self.screen, 700, 600, "button_exit")
 
     def _init_pygame(self):
         pygame.init()
@@ -200,6 +200,7 @@ class Asteroidy:
                         else:
                             music.set_volume(self.music_volume)
                             self.is_music_turned_on = True
+                        self.button_music.change_image()
 
                     # going back to main menu
                     if self.button_back.is_pressed():
