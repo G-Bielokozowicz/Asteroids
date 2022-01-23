@@ -26,7 +26,12 @@ class Asteroidy:
         self.options_mode = False
         self.game_over = False
         self.tutorial_mode = False
+
         self.paused = False
+        self.pause_screen = pygame.Surface((1600, 900))
+        self.pause_screen.set_alpha(100)
+        self.pause_screen.fill((0, 0, 0))
+
         self.upgrades = [self._get_random_upgrade()]
 
         self.music_volume = 0.05
@@ -97,6 +102,41 @@ class Asteroidy:
             pygame.display.flip()
             self._handle_input()
 
+    def _game_loss(self):
+        self.game_over = True
+        self._record_high_score()
+        music.pause()
+        self._game_over_loop()
+
+    def _turn_off_sound(self):
+        self.is_sound_turned_on = not self.is_sound_turned_on
+        for obj in self._get_game_objects():
+            obj.is_sound_turned_on = not obj.is_sound_turned_on
+
+    def _game_over_loop(self):
+        while True:
+            self._draw()
+            for event in pygame.event.get():
+                # exiting the game
+                if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
+                    quit()
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
+                    self._restart()
+                    self.main_loop()
+
+    # game restart
+    def _restart(self):
+        # if self.game_over:
+        self.spaceship = Spaceship((800, 450), self.bullets.append)
+        self.game_over = False
+        self.asteroids.clear()
+        self.bullets.clear()
+        self.upgrades.clear()
+        self.score = 0
+        self._asteroid_spawn(amount=5)
+        self.upgrades = [self._get_random_upgrade()]
+        music.unpause()
+
     def _process_game_logic(self):
         for game_object in self._get_game_objects():
             game_object.move(self.screen)
@@ -152,41 +192,6 @@ class Asteroidy:
         for bullet in self.bullets[:]:
             if not self.screen.get_rect().collidepoint(bullet.position):
                 self.bullets.remove(bullet)
-
-    def _game_loss(self):
-        self.game_over = True
-        self._record_high_score()
-        music.pause()
-        self._game_over_loop()
-
-    def _turn_off_sound(self):
-        self.is_sound_turned_on = not self.is_sound_turned_on
-        for obj in self._get_game_objects():
-            obj.is_sound_turned_on = not obj.is_sound_turned_on
-
-    def _game_over_loop(self):
-        while True:
-            self._draw()
-            for event in pygame.event.get():
-                # exiting the game
-                if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
-                    quit()
-                if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
-                    self._restart()
-                    self.main_loop()
-
-    # game restart
-    def _restart(self):
-        # if self.game_over:
-        self.spaceship = Spaceship((800, 450), self.bullets.append)
-        self.game_over = False
-        self.asteroids.clear()
-        self.bullets.clear()
-        self.upgrades.clear()
-        self.score = 0
-        self._asteroid_spawn(amount=5)
-        self.upgrades = [self._get_random_upgrade()]
-        music.unpause()
 
     def _handle_input(self):
         for event in pygame.event.get():
@@ -277,7 +282,9 @@ class Asteroidy:
             game_object.draw(self.screen)
 
         if self.paused:
+            self.screen.blit(self.pause_screen,(0,0))
             print_text(self.screen, "PAUSED", 10, 50, 80, True)
+
 
         if self.game_over:
             temp2 = "You lost! Press Enter to restart"
