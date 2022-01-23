@@ -74,6 +74,7 @@ class Asteroidy:
 
     # main menu
     def menu(self):
+        music.unpause()
         while self.menu_mode:
             # self.screen.blit(self.startbg, (0, 0))
             self.screen.blit(self.background, (0, 0))
@@ -118,9 +119,15 @@ class Asteroidy:
             self._draw()
             for event in pygame.event.get():
                 # exiting the game
-                if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
+                if event.type == pygame.QUIT:  # or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
                     quit()
+                # going back to menu
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                    self.menu_mode = True
+                    self.menu()
+                # restarting
                 if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
+                    self.game_over = False
                     self._restart()
                     self.main_loop()
 
@@ -128,7 +135,7 @@ class Asteroidy:
     def _restart(self):
         # if self.game_over:
         self.spaceship = Spaceship((800, 450), self.bullets.append)
-        self.spaceship.is_sound_turned_on=self.is_sound_turned_on
+        self.spaceship.is_sound_turned_on = self.is_sound_turned_on
         self.game_over = False
         self.asteroids.clear()
         self.bullets.clear()
@@ -197,7 +204,8 @@ class Asteroidy:
     def _handle_input(self):
         for event in pygame.event.get():
             # quitting with escape
-            if event.type == pygame.QUIT:  # or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
+            if event.type == pygame.QUIT or (
+                    event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE and self.menu_mode == True):
                 quit()
 
             # main menu
@@ -261,7 +269,7 @@ class Asteroidy:
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                 self.is_paused = not self.is_paused
             # if is_paused
-            elif event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN and self.is_paused:
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_y and self.is_paused:
                 self.menu_mode = True
                 self.menu()
 
@@ -295,11 +303,13 @@ class Asteroidy:
 
         if self.is_paused:
             self.screen.blit(self.pause_screen, (0, 0))
-            print_text(self.screen, "Paused", 10, 50, 80, True)
+            print_text(self.screen, "Paused", 690, 350, 80, False)
+            print_text(self.screen, "Press 'y' to go back to main menu", 380, 440, 60, False)
 
         if self.game_over:
+            self.screen.blit(self.pause_screen, (0, 0))
             temp2 = "You lost! Press Enter to restart"
-            print_text(self.screen, temp2, 340, 350, 60, False)
+            print_text(self.screen, temp2, 360, 350, 60, False)
             temp3 = "Your current score: " + str(self.score)
             print_text(self.screen, temp3, 500, 410, 60)
             temp4 = "Your highscore: " + str(self.highscore)
