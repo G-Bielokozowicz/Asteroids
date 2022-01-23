@@ -18,15 +18,15 @@ def load_sprite(name: str, with_alpha=True) -> Surface:
         return loaded_sprite.convert()
 
 
-def image_at(which_image: int,isShielded: bool = False) -> Surface:
+def image_at(which_image: int, isShielded: bool = False) -> Surface:
     if isShielded is False:
-         sheet = load_sprite("spaceship_sheet_unshielded")
+        sheet = load_sprite("spaceship_sheet_unshielded")
     else:
         sheet = load_sprite("spaceship_sheet_shielded")
     image_number = which_image - 1  # sprites start at 0 in file, but I want to start counting them at 1, so I need to subtract 1
     sprite = pygame.Surface((50, 50), pygame.SRCALPHA, 32)
     sprite.set_colorkey((0, 0, 0))
-    sprite.blit(sheet, (0, 0), (image_number*50, 0, 50, 50))
+    sprite.blit(sheet, (0, 0), (image_number * 50, 0, 50, 50))
     return sprite
 
 
@@ -41,14 +41,14 @@ def wrap_position(position: Vector2, surface: Surface) -> Vector2:
     return Vector2(x % w, y % h)
 
 
-def get_random_position(surface: Surface)->Vector2:
+def get_random_position(surface: Surface) -> Vector2:
     return Vector2(
         random.randrange(surface.get_width()),
         random.randrange(surface.get_height())
     )
 
 
-def get_random_velocity(min_speed: int, max_speed: int)->Vector2:
+def get_random_velocity(min_speed: int, max_speed: int) -> Vector2:
     speed = random.randint(min_speed, max_speed)
     angle = random.randrange(0, 360)
     return Vector2(speed, 0).rotate(angle)

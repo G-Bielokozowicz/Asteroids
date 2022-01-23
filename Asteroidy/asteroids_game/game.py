@@ -26,6 +26,7 @@ class Asteroidy:
         self.options_mode = False
         self.game_over = False
         self.tutorial_mode = False
+        self.paused = False
         self.upgrades = [self._get_random_upgrade()]
 
         self.music_volume = 0.05
@@ -190,7 +191,7 @@ class Asteroidy:
     def _handle_input(self):
         for event in pygame.event.get():
             # quitting with escape
-            if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
+            if event.type == pygame.QUIT:  # or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
                 quit()
 
             # main menu
@@ -239,26 +240,29 @@ class Asteroidy:
             elif self.tutorial_mode:
                 if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                     if self.button_tutorial_back.is_pressed():
-                        self.menu_mode=True
-                        self.tutorial_mode=False
+                        self.menu_mode = True
+                        self.tutorial_mode = False
                         self.menu()
             # game
-            elif self.spaceship and event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+            elif self.spaceship and not self.paused and event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
                 self.spaceship.shoot()
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                self.paused = not self.paused
         # moving the spaceship
-        is_key_pressed = pygame.key.get_pressed()
-        if self.spaceship and not self.menu_mode:
-            if is_key_pressed[pygame.K_RIGHT]:
-                self.spaceship.rotate(clockwise=True)
-            elif is_key_pressed[pygame.K_LEFT]:
-                self.spaceship.rotate(clockwise=False)
-            if is_key_pressed[pygame.K_UP]:
-                self.spaceship.accelerate()
-            else:
-                if self.spaceship.isShielded:
-                    self.spaceship.sprite = self.spaceship.shielded_sprites[self.spaceship.lives - 1]
+        if not self.paused:
+            is_key_pressed = pygame.key.get_pressed()
+            if self.spaceship and not self.menu_mode:
+                if is_key_pressed[pygame.K_RIGHT]:
+                    self.spaceship.rotate(clockwise=True)
+                elif is_key_pressed[pygame.K_LEFT]:
+                    self.spaceship.rotate(clockwise=False)
+                if is_key_pressed[pygame.K_UP]:
+                    self.spaceship.accelerate()
                 else:
-                    self.spaceship.sprite = self.spaceship.unshielded_sprites[self.spaceship.lives - 1]
+                    if self.spaceship.isShielded:
+                        self.spaceship.sprite = self.spaceship.shielded_sprites[self.spaceship.lives - 1]
+                    else:
+                        self.spaceship.sprite = self.spaceship.unshielded_sprites[self.spaceship.lives - 1]
 
     def _draw(self):
         self.screen.blit(self.background, (0, 0))
@@ -271,6 +275,9 @@ class Asteroidy:
 
         for game_object in self._get_game_objects():
             game_object.draw(self.screen)
+
+        if self.paused:
+            print_text(self.screen, "PAUSED", 10, 50, 80, True)
 
         if self.game_over:
             temp2 = "You lost! Press Enter to restart"
@@ -301,8 +308,7 @@ class Asteroidy:
 
     def main_loop(self):
         while True:
-            # handle input outside of if, so that it's possible to quit and restart the game
             self._handle_input()
-            # if not self.game_over:
-            self._process_game_logic()
             self._draw()
+            if not self.paused:
+                self._process_game_logic()
