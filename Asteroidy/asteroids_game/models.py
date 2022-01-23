@@ -115,7 +115,7 @@ class Spaceship(GameObject):
 
 
 class Asteroid(GameObject):
-    def __init__(self, position: Vector2, create_asteroid_callback: callable,size: int = 3):
+    def __init__(self, position: Vector2, create_asteroid_callback: callable, size: int = 3):
         self.create_asteroid_callback = create_asteroid_callback
         self.size = size
         self.asteroid_destroy_sound = load_sound("asteroid_destroy")
@@ -133,8 +133,8 @@ class Asteroid(GameObject):
     def split(self):
         if self.size > 1:
             for _ in range(2):
-                asteroid = Asteroid(self.position, self.create_asteroid_callback,self.size - 1)
-                asteroid.is_sound_turned_on=self.is_sound_turned_on
+                asteroid = Asteroid(self.position, self.create_asteroid_callback, self.size - 1)
+                asteroid.is_sound_turned_on = self.is_sound_turned_on
                 self.create_asteroid_callback(asteroid)
         if self.is_sound_turned_on:
             self.asteroid_destroy_sound.play()
