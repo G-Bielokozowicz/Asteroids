@@ -32,16 +32,15 @@ class Asteroidy:
         self.pause_screen.set_alpha(100)
         self.pause_screen.fill((0, 0, 0))
 
-        self.upgrades = [self._get_random_upgrade()]
-
+        self.is_music_turned_on = True
+        self.is_sound_turned_on = True
         self.music_volume = 0.05
         music.load("assets/sounds/soundtrack.wav")
         music.set_volume(self.music_volume)
         music.play(-1, fade_ms=1000)
-        self.is_music_turned_on = True
-        self.is_sound_turned_on = True
-        # self._asteroid_spawn(amount=5)
 
+        # self._asteroid_spawn(amount=5)
+        self.upgrades = [self._get_random_upgrade()]
         self.button_start = Button(self.screen, 700, 300, "button_start")
         self.button_options = Button(self.screen, 700, 380, "button_options")
         self.button_back = Button(self.screen, 700, 600, "button_back")
@@ -67,8 +66,8 @@ class Asteroidy:
 
     def _get_random_upgrade(self):
         upgrade_list = {
-            1: Shield(get_random_position(self.screen), self.spaceship),
-            2: Shotgun(get_random_position(self.screen), self.spaceship)
+            1: Shield(get_random_position(self.screen), self.spaceship,self.is_sound_turned_on),
+            2: Shotgun(get_random_position(self.screen), self.spaceship,self.is_sound_turned_on)
         }
         return upgrade_list[random.randint(1, 2)]
 

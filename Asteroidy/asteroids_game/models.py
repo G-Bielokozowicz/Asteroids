@@ -152,10 +152,11 @@ class Bullet(GameObject):
 
 
 class Shotgun(GameObject):
-    def __init__(self, position: Vector2, ship):
+    def __init__(self, position: Vector2, ship, is_sound: Any):
         super().__init__(position, load_sprite("shotgun"), get_random_velocity(1, 3))
         self.ship = ship
         self.sound = load_sound("upgrade")
+        self.is_sound_turned_on = is_sound
 
     def destroy(self):
         self.ship.shotgun = True
@@ -165,10 +166,11 @@ class Shotgun(GameObject):
 
 
 class Shield(GameObject):
-    def __init__(self, position: Vector2, ship):
+    def __init__(self, position: Vector2, ship, is_sound: Any):
         super().__init__(position, load_sprite("shield"), get_random_velocity(1, 3))
         self.ship = ship
         self.sound = load_sound("upgrade")
+        self.is_sound_turned_on = is_sound
 
     def destroy(self):
         self.ship.isShielded = True
